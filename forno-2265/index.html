@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forno 2265 · Pizzería en Yarumal</title>
+<meta name="description" content="Pizza napolitana de horno de leña a 2.265 metros, en Yarumal, Antioquia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fog:#eceff2;        /* niebla de Yarumal */
+  --fog-2:#f7f8fa;
+  --ink:#111315;
+  --ink-2:#4b525a;
+  --tomato:#d7261e;
+  --ember:#ff6a2b;
+  --basil:#2e7d4f;
+  --line:rgba(17,19,21,.1);
+  --display:"Bricolage Grotesque", system-ui, sans-serif;
+  --body:system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --g:clamp(16px,4vw,48px);
+  --r:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{background:var(--fog);color:var(--ink);font:400 1.0625rem/1.5 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--tomato) 60%,transparent);outline-offset:3px;border-radius:10px}
+
+/* tipografía: tracking según tamaño */
+.display{font-family:var(--display);font-optical-sizing:auto;font-weight:800;letter-spacing:-.045em;line-height:.9}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,5.4vw,4.6rem);letter-spacing:-.04em;line-height:.95}
+.eyebrow{font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--tomato);margin-bottom:.9rem;display:block}
+.lead{font-size:1.18rem;color:var(--ink-2);letter-spacing:-.01em;max-width:40ch}
+
+/* botones: respuesta en pointer-down */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:52px;padding:0 1.5rem;border-radius:999px;background:var(--ink);color:#fff;font-weight:600;font-size:1rem;letter-spacing:-.01em;text-decoration:none;transition:transform .1s ease-out, background-color .2s ease}
+.btn:active{transform:scale(.97)}
+.btn.red{background:var(--tomato)}
+.btn.glass{background:rgba(255,255,255,.55);color:var(--ink);backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+@media (hover:hover) and (pointer:fine){.btn:hover{background:#2a2e33}.btn.red:hover{background:#be1f18}.btn.glass:hover{background:rgba(255,255,255,.75)}}
+
+/* nav: material translúcido, el contenido pasa por debajo */
+.nav{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:50;width:min(1100px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:1rem;height:60px;padding:0 8px 0 20px;border-radius:999px;background:rgba(247,248,250,.62);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 0 0 1px rgba(17,19,21,.06), 0 8px 30px -12px rgba(17,19,21,.25)}
+.logo{display:flex;align-items:center;gap:.55rem;font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.04em;text-decoration:none}
+.logo i{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 70%,var(--ember),var(--tomato) 60%);box-shadow:0 0 14px rgba(255,106,43,.6)}
+.nav ul{display:flex;gap:1.6rem;list-style:none;font-size:.93rem;font-weight:500}
+.nav ul a{text-decoration:none;color:var(--ink-2);transition:color .2s ease}
+.nav ul a:hover{color:var(--ink)}
+.nav .btn{height:44px;padding:0 1.1rem;font-size:.92rem}
+
+/* hero */
+.hero{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);align-items:center;padding:100px var(--g) 40px;max-width:1400px;margin:0 auto}
+.temps{display:grid;gap:.4rem}
+.temp{display:flex;align-items:baseline;gap:1rem}
+.temp .label{font-size:.95rem;font-weight:600;color:var(--ink-2);min-width:5.5em;letter-spacing:-.01em}
+.temp .num{font-family:var(--display);font-weight:800;font-size:clamp(4.6rem,11vw,10rem);letter-spacing:-.06em;line-height:.85;font-variant-numeric:tabular-nums}
+.temp.cold .num{color:#8a9aa8}
+.temp.hot .num{background:linear-gradient(180deg,var(--ember),var(--tomato) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{margin:1.8rem 0 2rem}
+.hero-ctas{display:flex;gap:.7rem;flex-wrap:wrap}
+.oven{position:relative;border-radius:36px;overflow:hidden;aspect-ratio:4/5;max-height:80svh;justify-self:end;width:100%;box-shadow:0 40px 80px -30px rgba(17,19,21,.5)}
+.oven img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1.08);transition:transform 1.6s cubic-bezier(.23,1,.32,1)}
+.oven.in img{transform:scale(1)}
+.oven .glass-chip{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:14px 16px 14px 20px;border-radius:22px;background:rgba(20,20,22,.42);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.glass-chip b{display:block;font-weight:600;letter-spacing:-.01em}
+.glass-chip span{font-size:.85rem;opacity:.75}
+.live{display:inline-flex;align-items:center;gap:.45rem;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.14);padding:.45rem .75rem;border-radius:999px;white-space:nowrap}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#9aa3ab}
+.live.open::before{background:#43d17a;box-shadow:0 0 0 3px rgba(67,209,122,.25)}
+
+section{padding:clamp(80px,11vw,140px) var(--g);max-width:1400px;margin:0 auto}
+
+/* ---------- la rueda ---------- */
+.wheel-sec{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,5vw,72px);align-items:center}
+.wheel-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:1rem}
+.wheel-wrap{position:relative;aspect-ratio:1;width:100%;max-width:620px;justify-self:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.peel{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 45%,#2b2f34,#15171a 70%);box-shadow:inset 0 2px 0 rgba(255,255,255,.06), 0 40px 70px -30px rgba(17,19,21,.6)}
+.rotor{position:absolute;inset:0;will-change:transform;cursor:grab}
+.rotor.grabbing{cursor:grabbing}
+.rotor img{position:absolute;inset:13%;width:74%;height:74%;border-radius:50%;pointer-events:none;filter:drop-shadow(0 16px 24px rgba(0,0,0,.45))}
+.ring-label{position:absolute;left:50%;top:50%;width:0;height:0}
+.ring-label span{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.45);transition:color .25s ease}
+.ring-label.on span{color:#fff}
+.pointer{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:16px solid var(--tomato);filter:drop-shadow(0 4px 6px rgba(215,38,30,.4));z-index:3}
+.wheel-hint{position:absolute;left:50%;bottom:-2.6rem;transform:translateX(-50%);font-size:.85rem;color:var(--ink-2);white-space:nowrap;display:flex;gap:.5rem;align-items:center}
+.wheel-hint kbd{font:inherit;font-size:.75rem;padding:.1rem .4rem;border-radius:6px;background:#fff;box-shadow:0 0 0 1px var(--line)}
+
+.detail{background:var(--fog-2);border-radius:var(--r);overflow:hidden;box-shadow:0 0 0 1px var(--line), 0 30px 60px -40px rgba(17,19,21,.35)}
+.detail .ph{aspect-ratio:16/10;overflow:hidden;position:relative;background:#ddd}
+.detail .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.detail .body{padding:26px 28px 28px}
+.detail .row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.detail h3{font-family:var(--display);font-weight:800;font-size:2.2rem;letter-spacing:-.04em;line-height:1}
+.detail .price{font-family:var(--display);font-weight:600;font-size:1.5rem;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.detail p{color:var(--ink-2);margin:.7rem 0 1.2rem;min-height:3em}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.3rem}
+.tags span{font-size:.78rem;font-weight:600;padding:.35rem .7rem;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line)}
+.tags span.hot{color:var(--tomato)}
+.detail .actions{display:flex;gap:.6rem}
+.detail .actions .btn{flex:1}
+.nav-btn{width:52px;height:52px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px var(--line);display:grid;place-items:center;flex:none;transition:transform .1s ease-out}
+.nav-btn:active{transform:scale(.94)}
+.xf{transition:opacity .22s ease, filter .22s ease}
+.xf.out{opacity:0;filter:blur(8px)}
+
+/* ---------- proceso ---------- */
+.process{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:3rem}
+.step{background:var(--fog-2);border-radius:var(--r);padding:30px;min-height:320px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 0 0 1px var(--line);position:relative;overflow:hidden}
+.step .big{font-family:var(--display);font-weight:800;font-size:clamp(4.4rem,8vw,7rem);letter-spacing:-.06em;line-height:.85}
+.step .big small{font-size:.35em;letter-spacing:-.02em;margin-left:.1em}
+.step h3{font-size:1.2rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.35rem}
+.step p{color:var(--ink-2);font-size:.97rem}
+.step .seq{position:absolute;top:26px;right:28px;font-size:.8rem;font-weight:600;color:var(--ink-2)}
+.step.fire{background:linear-gradient(160deg,#1a1c1f,#0d0e10);color:#fff}
+.step.fire p,.step.fire .seq{color:rgba(255,255,255,.65)}
+.step.fire .big{background:linear-gradient(180deg,#ffb36b,var(--ember) 45%,var(--tomato));-webkit-background-clip:text;background-clip:text;color:transparent}
+.step.fire::after{content:"";position:absolute;left:-20%;right:-20%;bottom:-60%;height:90%;background:radial-gradient(closest-side,rgba(255,106,43,.45),transparent);filter:blur(10px);animation:ember 5s ease-in-out infinite alternate}
+@keyframes ember{from{opacity:.55;transform:translateY(8px)}to{opacity:1;transform:translateY(-6px)}}
+
+/* ---------- galería con arrastre ---------- */
+.rail-wrap{margin-top:3rem;position:relative}
+.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px var(--g) 20px;margin:0 calc(var(--g) * -1);scrollbar-width:none;cursor:grab;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.rail.dragging{cursor:grabbing;scroll-snap-type:none}
+.rail figure{flex:none;width:min(78vw,420px);aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;position:relative;scroll-snap-align:start}
+.rail figure:first-child{margin-left:0}
+.rail img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.rail figcaption{position:absolute;left:14px;bottom:14px;right:14px;padding:12px 14px;border-radius:16px;background:rgba(20,20,22,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;font-weight:600;letter-spacing:-.01em;font-size:.95rem}
+.rail-ctrl{display:flex;gap:.5rem;justify-content:flex-end;margin-top:.4rem}
+
+/* ---------- visita ---------- */
+.visit{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
+.visit .card{background:var(--fog-2);border-radius:var(--r);padding:clamp(24px,3vw,40px);box-shadow:0 0 0 1px var(--line);display:flex;flex-direction:column;gap:1.4rem}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem 1.6rem}
+.facts dt{font-size:.8rem;color:var(--ink-2);font-weight:600}
+.facts dd{font-weight:600;letter-spacing:-.01em;margin-top:.15rem}
+.status{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.9rem;padding:.5rem .85rem;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line);align-self:flex-start}
+.status i{width:8px;height:8px;border-radius:50%;background:#9aa3ab}
+.status.open i{background:#2fbf6a;box-shadow:0 0 0 3px rgba(47,191,106,.2)}
+.map{border-radius:var(--r);overflow:hidden;min-height:460px;position:relative;box-shadow:0 0 0 1px var(--line)}
+.map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(.35) contrast(1.05)}
+.map .glass-chip{position:absolute;left:14px;top:auto;right:auto;bottom:34px;background:rgba(247,248,250,.7);color:var(--ink);padding:12px 16px}
+
+footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
+.foot{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:36px}
+.foot .display{font-size:clamp(3.4rem,10vw,8rem)}
+.foot .display span{color:var(--tomato)}
+.foot-meta{display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;font-size:.92rem;color:var(--ink-2)}
+.foot-meta a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--tomato)}
+.foot-meta .soc{display:flex;gap:1rem}
+.foot-meta .soc a{border:0;font-weight:500;color:var(--ink-2)}
+
+/* ---------- barra y hoja del pedido ---------- */
+.bag{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;transform:translate(-50%,140%);display:flex;align-items:center;gap:14px;padding:8px 8px 8px 20px;border-radius:999px;background:rgba(17,19,21,.78);color:#fff;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 20px 40px -12px rgba(0,0,0,.5);will-change:transform;min-width:min(420px,calc(100vw - 24px))}
+.bag .count{display:grid;place-items:center;min-width:28px;height:28px;border-radius:999px;background:var(--tomato);font-weight:700;font-size:.85rem;padding:0 8px}
+.bag .txt{flex:1;font-weight:600;letter-spacing:-.01em}
+.bag .txt small{display:block;font-weight:500;opacity:.65;font-size:.8rem}
+.bag .btn{height:44px;background:#fff;color:var(--ink)}
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(10,11,12,.4);opacity:0;pointer-events:none}
+.sheet{position:fixed;left:50%;bottom:0;z-index:71;width:min(560px,100%);max-height:86svh;display:flex;flex-direction:column;border-radius:28px 28px 0 0;background:rgba(247,248,250,.92);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 -20px 60px -20px rgba(0,0,0,.45);transform:translate(-50%,105%);will-change:transform;padding-bottom:env(safe-area-inset-bottom);visibility:hidden}
+.grab{padding:10px 0 4px;display:grid;place-items:center;cursor:grab;touch-action:none}
+.grab i{width:40px;height:5px;border-radius:5px;background:rgba(17,19,21,.2)}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;padding:6px 24px 14px;touch-action:none}
+.sheet-head h3{font-family:var(--display);font-weight:800;font-size:1.8rem;letter-spacing:-.04em}
+.close{width:34px;height:34px;border-radius:50%;background:rgba(17,19,21,.07);display:grid;place-items:center}
+.lines{list-style:none;overflow:auto;padding:0 24px;flex:1}
+.line{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line img{width:56px;height:56px;border-radius:14px;object-fit:cover}
+.line b{display:block;font-weight:600;letter-spacing:-.01em}
+.line small{color:var(--ink-2)}
+.qty{display:flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:3px;box-shadow:0 0 0 1px var(--line)}
+.qty button{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem;transition:transform .1s ease-out, background-color .15s}
+.qty button:active{transform:scale(.9);background:var(--fog)}
+.qty output{min-width:1.4em;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.sheet-foot{padding:18px 24px 22px;display:grid;gap:12px}
+.sheet-foot .sum{display:flex;justify-content:space-between;font-weight:600}
+.sheet-foot .sum b{font-family:var(--display);font-size:1.6rem;letter-spacing:-.03em}
+.empty{padding:30px 24px;color:var(--ink-2);text-align:center}
+
+/* aparición */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease, transform .9s cubic-bezier(.23,1,.32,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .nav ul{display:none}
+  .hero{grid-template-columns:1fr;padding-top:96px}
+  .oven{aspect-ratio:4/3.4;max-height:none;order:-1}
+  .wheel-sec{grid-template-columns:1fr}
+  .wheel-wrap{max-width:440px;margin-bottom:3rem}
+  .process{grid-template-columns:1fr}
+  .step{min-height:240px}
+  .visit{grid-template-columns:1fr}
+  .map{min-height:380px}
+  .foot-meta{align-items:flex-start}
+}
+@media (max-width:520px){
+  .ring-label span{font-size:.64rem;letter-spacing:.03em}
+  .temp .label{min-width:4.6em;font-size:.85rem}
+  .detail h3{font-size:1.8rem}
+  .bag{padding-left:14px}
+  .oven{aspect-ratio:1}
+  .oven .glass-chip{left:10px;right:10px;bottom:10px;padding:10px 10px 10px 14px}
+  .oven .glass-chip div span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.15s!important}
+  .rv{transform:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .nav,.bag,.sheet,.glass-chip,.rail figcaption{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .nav{background:var(--fog-2)} .sheet{background:var(--fog-2)} .bag{background:var(--ink)}
+}
+@media (prefers-contrast:more){
+  .nav,.sheet{background:#fff;box-shadow:0 0 0 2px var(--ink)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Principal">
+  <a class="logo" href="#top"><i aria-hidden="true"></i>Forno 2265</a>
+  <ul>
+    <li><a href="#carta">Carta</a></li>
+    <li><a href="#masa">La masa</a></li>
+    <li><a href="#fotos">Fotos</a></li>
+    <li><a href="#visita">Visítanos</a></li>
+  </ul>
+  <a class="btn red" href="#carta">Pedir pizza</a>
+</nav>
+
+<header class="hero" id="top">
+  <div>
+    <div class="temps" aria-label="Afuera 14 grados, adentro del horno 485 grados">
+      <div class="temp cold rv"><span class="label">Afuera</span><span class="num" id="tOut">14°</span></div>
+      <div class="temp hot rv"><span class="label">Adentro</span><span class="num" id="tIn">485°</span></div>
+    </div>
+    <p class="lead rv">Yarumal es la ciudad más fría de Antioquia. Por eso nuestro horno de leña nunca se apaga: pizza napolitana en 90 segundos, a 2.265 metros sobre el mar.</p>
+    <div class="hero-ctas rv">
+      <a class="btn red" href="#carta">Ver la carta</a>
+      <a class="btn glass" href="#visita">Cómo llegar</a>
+    </div>
+  </div>
+  <figure class="oven" id="oven">
+    <img src="img/hero.jpg" alt="Pizza napolitana frente al horno de leña encendido" fetchpriority="high">
+    <figcaption class="glass-chip"><div><b>Horno de leña encendido</b><span>Cada pizza sale en 90 segundos</span></div><span class="live" id="liveOpen">Abierto</span></figcaption>
+  </figure>
+</header>
+
+<section id="carta">
+  <div class="wheel-sec">
+    <div class="wheel-head rv">
+      <div>
+        <span class="eyebrow">La carta</span>
+        <h2>Gira la pizza.</h2>
+      </div>
+      <p class="lead">Agárrala y dale vuelta: cada porción es una pizza distinta de la carta. También puedes usar las flechas del teclado.</p>
+    </div>
+
+    <div class="wheel-wrap rv" id="wheel" role="listbox" aria-label="Pizzas de la carta" tabindex="0">
+      <div class="peel"></div>
+      <span class="pointer" aria-hidden="true"></span>
+      <div class="rotor" id="rotor">
+        <img src="img/spin.webp" alt="" draggable="false">
+      </div>
+      <span class="wheel-hint" aria-hidden="true">Arrastra para girar · <kbd>←</kbd><kbd>→</kbd></span>
+    </div>
+
+    <article class="detail rv" aria-live="polite">
+      <div class="ph"><img id="dImg" class="xf" src="img/p-margherita.jpg" alt=""></div>
+      <div class="body">
+        <div class="row xf" id="dRow"><h3 id="dName">Margherita</h3><span class="price" id="dPrice">$32.000</span></div>
+        <p class="xf" id="dDesc"></p>
+        <div class="tags xf" id="dTags"></div>
+        <div class="actions">
+          <button class="nav-btn" id="prev" aria-label="Pizza anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 3 5 9l6 6"/></svg></button>
+          <button class="btn red" id="add">Agregar al pedido</button>
+          <button class="nav-btn" id="next" aria-label="Pizza siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 3 6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="masa" style="padding-top:0">
+  <div class="rv">
+    <span class="eyebrow">Cómo se hace</span>
+    <h2>Tres números<br>y una pizza.</h2>
+  </div>
+  <div class="process">
+    <article class="step rv">
+      <span class="seq">Paso 1</span>
+      <div class="big">72<small>h</small></div>
+      <div><h3>Fermentación lenta</h3><p>La masa reposa tres días en frío. El clima de Yarumal ayuda: más aroma, más ligera, sin pesadez.</p></div>
+    </article>
+    <article class="step fire rv">
+      <span class="seq">Paso 2</span>
+      <div class="big">485°</div>
+      <div><h3>Horno de leña</h3><p>Leña de eucalipto de la región. El piso de piedra dorará la base mientras el borde se infla y se manchea.</p></div>
+    </article>
+    <article class="step rv">
+      <span class="seq">Paso 3</span>
+      <div class="big">90<small>s</small></div>
+      <div><h3>Directo a la mesa</h3><p>Noventa segundos de horno y sale. Sin lámparas de calor, sin esperas: se come en su mejor minuto.</p></div>
+    </article>
+  </div>
+</section>
+
+<section id="fotos" style="padding-top:0">
+  <div class="rv" style="display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap">
+    <div><span class="eyebrow">En la mesa</span><h2>Para compartir<br>(o no).</h2></div>
+  </div>
+  <div class="rail-wrap rv">
+    <div class="rail" id="rail">
+      <figure><img src="img/compartir.jpg" alt="Porción de pizza con el queso estirándose" loading="lazy" draggable="false"><figcaption>El queso que se estira</figcaption></figure>
+      <figure><img src="img/vapor.jpg" alt="Pizza recién salida del horno humeando" loading="lazy" draggable="false"><figcaption>Recién salida, todavía humeando</figcaption></figure>
+      <figure><img src="img/napoli.jpg" alt="Primer plano de pizza napolitana con albahaca" loading="lazy" draggable="false"><figcaption>Borde inflado y manchado de leña</figcaption></figure>
+      <figure><img src="img/rucula.jpg" alt="Pizza con rúgula fresca" loading="lazy" draggable="false"><figcaption>Rúgula de huerta local</figcaption></figure>
+      <figure><img src="img/slices.jpg" alt="Pizza de pollo con cebolla y cilantro sobre tabla" loading="lazy" draggable="false"><figcaption>Pollo, cebolla morada y cilantro</figcaption></figure>
+    </div>
+    <div class="rail-ctrl">
+      <button class="nav-btn" data-dir="-1" aria-label="Fotos anteriores"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 3 5 9l6 6"/></svg></button>
+      <button class="nav-btn" data-dir="1" aria-label="Fotos siguientes"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 3 6 6-6 6"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<section id="visita" style="padding-top:0">
+  <div class="rv" style="margin-bottom:2.4rem"><span class="eyebrow">Visítanos</span><h2>Siempre hay<br>una mesa tibia.</h2></div>
+  <div class="visit">
+    <div class="card rv">
+      <span class="status" id="status"><i></i><span>Consultando horario…</span></span>
+      <dl class="facts">
+        <div><dt>Dirección</dt><dd>Cra. 20 #21-08, Yarumal</dd></div>
+        <div><dt>Teléfono</dt><dd><a href="tel:+573205550177" style="text-decoration:none">320 555 0177</a></dd></div>
+        <div><dt>Martes a jueves</dt><dd>5:00 – 10:00 p.m.</dd></div>
+        <div><dt>Viernes a domingo</dt><dd>12:00 – 11:00 p.m.</dd></div>
+        <div><dt>Domicilios</dt><dd>Casco urbano, 30–40 min</dd></div>
+        <div><dt>Lunes</dt><dd>Descansa el horno</dd></div>
+      </dl>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:auto">
+        <a class="btn" href="https://wa.me/573205550177" target="_blank" rel="noopener">Reservar por WhatsApp</a>
+        <a class="btn glass" style="box-shadow:0 0 0 1px var(--line)" href="https://www.google.com/maps/search/?api=1&query=Yarumal%2C%20Antioquia" target="_blank" rel="noopener">Abrir en Maps</a>
+      </div>
+    </div>
+    <div class="map rv">
+      <iframe title="Mapa de Forno 2265 en Yarumal, Antioquia" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Yarumal%2C%20Antioquia&z=15&output=embed"></iframe>
+      <div class="glass-chip"><div><b>Forno 2265</b><span>Yarumal, Antioquia · 2.265 m</span></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div class="display" aria-hidden="true">Forno <span>2265</span></div>
+    <div class="foot-meta">
+      <div class="soc"><a href="#">Instagram</a><a href="#">TikTok</a><a href="https://wa.me/573205550177">WhatsApp</a></div>
+      <span>Yarumal, Antioquia · © <span id="yr"></span></span>
+      <span>Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- pedido -->
+<div class="bag" id="bag" aria-live="polite">
+  <span class="count" id="bagCount">0</span>
+  <span class="txt" id="bagTxt">Tu pedido<small>$0</small></span>
+  <button class="btn" id="openSheet">Ver pedido</button>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+  <div class="grab" id="grab" aria-hidden="true"><i></i></div>
+  <div class="sheet-head" id="sheetHead"><h3 id="sheetTitle">Tu pedido</h3><button class="close" id="closeSheet" aria-label="Cerrar pedido"><svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2 2 12"/></svg></button></div>
+  <ul class="lines" id="lines"></ul>
+  <div class="sheet-foot">
+    <div class="sum"><span>Total</span><b id="sheetTotal">$0</b></div>
+    <button class="btn red" id="checkout">Enviar pedido por WhatsApp</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  const money = n => '$' + n.toLocaleString('es-CO');
+
+  /* ---------- resorte (razón de amortiguamiento + respuesta, como en iOS) ---------- */
+  function spring({ from, to, velocity = 0, damping = 1, response = .4, onUpdate, onDone }){
+    const k = Math.pow(2 * Math.PI / response, 2), c = 4 * Math.PI * damping / response;
+    let x = from, v = velocity, last = performance.now(), id, stopped = false;
+    function frame(now){
+      if (stopped) return;
+      let dt = Math.min(.064, (now - last) / 1000); last = now;
+      // subpasos para estabilidad
+      const n = Math.ceil(dt / .004), h = dt / n;
+      for (let i = 0; i < n; i++){ const a = -k * (x - to) - c * v; v += a * h; x += v * h; }
+      onUpdate(x, v);
+      if (Math.abs(v) < .02 && Math.abs(x - to) < .02){ onUpdate(to, 0); onDone && onDone(); return; }
+      id = requestAnimationFrame(frame);
+    }
+    if (reduce){ onUpdate(to, 0); onDone && onDone(); return { stop(){}, get value(){ return to; } }; }
+    id = requestAnimationFrame(frame);
+    return { stop(){ stopped = true; cancelAnimationFrame(id); }, get value(){ return x; }, get velocity(){ return v; } };
+  }
+  // proyección de impulso (desaceleración exponencial, como el scroll)
+  const project = (v, d = .998) => (v / 1000) * d / (1 - d);
+  const rubberband = (over, dim, c = .55) => (over * dim * c) / (dim + c * Math.abs(over));
+
+  /* ---------- carta ---------- */
+  const PIZZAS = [
+    { n:'Margherita', p:32000, img:'p-margherita', d:'Tomate San Marzano, fior di latte, albahaca fresca y aceite de oliva. La que mide a toda pizzería.', t:['Clásica','Vegetariana'] },
+    { n:'Pomodorini', p:34000, img:'p-diavola', d:'Tomates cherry asados, mozzarella, albahaca y un hilo de aceite de ajo. Fresca y jugosa.', t:['Vegetariana'] },
+    { n:'Montañera', p:39000, img:'p-montanera', d:'Chorizo de Santa Rosa de Osos, maíz tierno, cebolla morada y pimentón asado en leña.', t:['De la casa','Picante suave'], hot:1 },
+    { n:'Spinaci', p:36000, img:'p-espinaca', d:'Espinaca salteada, ricotta de la región, ajo confitado y nuez moscada. Base blanca.', t:['Base blanca','Vegetariana'] },
+    { n:'Bianca al romero', p:35000, img:'p-romero', d:'Mozzarella, romero, sal marina y ajo. Sin tomate, con todo el sabor del horno.', t:['Base blanca'] },
+    { n:'Quattro formaggi', p:41000, img:'p-quattro', d:'Mozzarella, queso campesino de Yarumal, azul y parmesano, terminada con miel de caña.', t:['Para compartir'] },
+  ];
+  const N = PIZZAS.length, STEP = 360 / N;
+  const rotor = $('rotor'), wheel = $('wheel');
+
+  // etiquetas en el anillo (giran con la pizza)
+  PIZZAS.forEach((pz, i) => {
+    const el = document.createElement('div');
+    el.className = 'ring-label'; el.setAttribute('role','option'); el.id = 'opt' + i;
+    el.innerHTML = `<span>${pz.n}</span>`;
+    rotor.appendChild(el);
+  });
+  const labels = [...rotor.querySelectorAll('.ring-label')];
+  function placeLabels(){
+    const R = rotor.offsetWidth * .435;
+    labels.forEach((el, i) => {
+      const a = i * STEP; // 0 = arriba
+      el.style.transform = `rotate(${a}deg) translateY(${-R}px)`;
+    });
+  }
+  placeLabels(); addEventListener('resize', placeLabels);
+
+  let angle = 0, anim = null, current = -1;
+  const setAngle = a => { angle = a; rotor.style.transform = `rotate(${a}deg)`; updateSelection(); };
+  const indexFor = a => ((Math.round(-a / STEP) % N) + N) % N;
+
+  function updateSelection(){
+    const i = indexFor(angle);
+    if (i === current) return;
+    current = i;
+    labels.forEach((l, k) => { l.classList.toggle('on', k === i); l.setAttribute('aria-selected', k === i); });
+    wheel.setAttribute('aria-activedescendant', 'opt' + i);
+    showDetail(i);
+    if (navigator.vibrate && dragging) navigator.vibrate(4);
+  }
+
+  const dImg = $('dImg'), dName = $('dName'), dPrice = $('dPrice'), dDesc = $('dDesc'), dTags = $('dTags');
+  let detailTimer;
+  function fillDetail(i){
+    const pz = PIZZAS[i];
+    dImg.src = `img/${pz.img}.jpg`; dImg.alt = pz.n;
+    dName.textContent = pz.n; dPrice.textContent = money(pz.p); dDesc.textContent = pz.d;
+    dTags.innerHTML = pz.t.map((t, k) => `<span class="${pz.hot && k === 1 ? 'hot' : ''}">${t}</span>`).join('');
+  }
+  function showDetail(i){
+    const els = [dImg, $('dRow'), dDesc, dTags];
+    clearTimeout(detailTimer);
+    if (reduce){ fillDetail(i); return; }
+    els.forEach(e => e.classList.add('out'));
+    detailTimer = setTimeout(() => { fillDetail(i); els.forEach(e => e.classList.remove('out')); }, 140);
+  }
+  // precargar imágenes de la carta
+  PIZZAS.forEach(p => { const im = new Image(); im.src = `img/${p.img}.jpg`; });
+
+  function settleTo(target, velocity = 0, damping = 1){
+    anim && anim.stop();
+    anim = spring({ from: angle, to: target, velocity, damping, response: .45, onUpdate: setAngle });
+  }
+  function go(delta){
+    // siempre desde el valor presente, no desde el objetivo anterior
+    const base = Math.round(angle / STEP) * STEP;
+    settleTo(base - delta * STEP, anim ? anim.velocity || 0 : 0);
+  }
+
+  // manipulación directa: el ángulo sigue al dedo, respetando dónde se agarró
+  let dragging = false, lastA = 0, samples = [];
+  const center = () => { const r = rotor.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+  const pointerAngle = e => { const c = center(); return Math.atan2(e.clientY - c.y, e.clientX - c.x) * 180 / Math.PI; };
+  rotor.addEventListener('pointerdown', e => {
+    anim && anim.stop(); anim = null;           // interrumpible: se agarra en pleno giro
+    dragging = true; rotor.setPointerCapture(e.pointerId); rotor.classList.add('grabbing');
+    lastA = pointerAngle(e); samples = [{ t: performance.now(), a: angle }];
+  });
+  rotor.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    let a = pointerAngle(e), d = a - lastA;
+    if (d > 180) d -= 360; if (d < -180) d += 360;
+    lastA = a; setAngle(angle + d);
+    const now = performance.now(); samples.push({ t: now, a: angle });
+    samples = samples.filter(s => now - s.t < 100);
+  });
+  function release(){
+    if (!dragging) return;
+    dragging = false; rotor.classList.remove('grabbing');
+    const s0 = samples[0], s1 = samples[samples.length - 1];
+    const dt = (s1.t - s0.t) / 1000;
+    const v = dt > 0 ? (s1.a - s0.a) / dt : 0;           // grados/segundo
+    const projected = angle + project(v, .994);
+    const target = Math.round(projected / STEP) * STEP;
+    settleTo(target, v, Math.abs(v) > 200 ? .8 : 1);      // rebote solo si hubo impulso
+  }
+  rotor.addEventListener('pointerup', release);
+  rotor.addEventListener('pointercancel', release);
+
+  wheel.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); go(-1); }
+  });
+  $('next').addEventListener('click', () => go(1));
+  $('prev').addEventListener('click', () => go(-1));
+  labels.forEach((l, i) => l.addEventListener('click', () => {
+    let target = -i * STEP; while (target - angle > 180) target -= 360; while (target - angle < -180) target += 360;
+    settleTo(target);
+  }));
+  updateSelection();
+
+  /* ---------- pedido ---------- */
+  const cart = new Map();
+  const bag = $('bag');
+  let bagShown = false, bagAnim = null, bagY = 140;
+  function showBag(show){
+    if (show === bagShown) return; bagShown = show;
+    bagAnim && bagAnim.stop();
+    bagAnim = spring({ from: bagY, to: show ? 0 : 140, damping: show ? .8 : 1, response: .4, onUpdate: y => { bagY = y; bag.style.transform = `translate(-50%, ${y}%)`; } });
+  }
+  function renderCart(){
+    let count = 0, total = 0;
+    cart.forEach((q, i) => { count += q; total += q * PIZZAS[i].p; });
+    $('bagCount').textContent = count;
+    $('bagTxt').innerHTML = `${count === 1 ? '1 pizza' : count + ' pizzas'}<small>${money(total)}</small>`;
+    $('sheetTotal').textContent = money(total);
+    $('lines').innerHTML = count ? [...cart].map(([i, q]) => `
+      <li class="line"><img src="img/${PIZZAS[i].img}.jpg" alt=""><div><b>${PIZZAS[i].n}</b><small>${money(PIZZAS[i].p)} c/u</small></div>
+      <div class="qty"><button data-i="${i}" data-d="-1" aria-label="Quitar una ${PIZZAS[i].n}">−</button><output>${q}</output><button data-i="${i}" data-d="1" aria-label="Agregar una ${PIZZAS[i].n}">+</button></div></li>`).join('')
+      : '<li class="empty">Tu pedido está vacío. Gira la pizza y agrega la que más te guste.</li>';
+    showBag(count > 0);
+  }
+  $('add').addEventListener('click', () => {
+    cart.set(current, (cart.get(current) || 0) + 1); renderCart();
+    // latido de confirmación en el contador, desde el valor presente
+    const c = $('bagCount');
+    spring({ from: 1.35, to: 1, damping: .6, response: .35, onUpdate: s => c.style.transform = `scale(${s})` });
+    if (navigator.vibrate) navigator.vibrate(8);
+  });
+  $('lines').addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    const i = +b.dataset.i, q = (cart.get(i) || 0) + +b.dataset.d;
+    q > 0 ? cart.set(i, q) : cart.delete(i);
+    renderCart();
+    if (!cart.size) closeSheet();
+  });
+  $('checkout').addEventListener('click', () => {
+    if (!cart.size) return;
+    let total = 0; const lines = [...cart].map(([i, q]) => { total += q * PIZZAS[i].p; return `• ${q} × ${PIZZAS[i].n}`; });
+    const msg = `Hola Forno 2265 🍕 Quiero pedir:\n${lines.join('\n')}\nTotal: ${money(total)}`;
+    window.open('https://wa.me/573205550177?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  });
+
+  /* ---------- hoja inferior arrastrable ---------- */
+  const sheet = $('sheet'), scrim = $('scrim');
+  let sheetY = 1, sheetAnim = null, sheetOpen = false; // 0 = abierta, 1 = cerrada (fracción de su altura)
+  const H = () => sheet.offsetHeight;
+  function paintSheet(y){
+    sheetY = y;
+    const px = y * H();
+    sheet.style.transform = `translate(-50%, ${y < 0 ? rubberband(px, H()) : px}px)`;
+    scrim.style.opacity = Math.max(0, Math.min(1, 1 - y));
+  }
+  function animateSheet(to, velocityPx = 0){
+    sheetAnim && sheetAnim.stop();
+    sheet.style.visibility = 'visible';
+    sheetAnim = spring({ from: sheetY, to, velocity: velocityPx / H(), damping: to === 0 && Math.abs(velocityPx) > 300 ? .85 : 1, response: .38, onUpdate: paintSheet,
+      onDone: () => { if (to === 1) sheet.style.visibility = 'hidden'; } });
+  }
+  function openSheet(){
+    sheetOpen = true; sheet.setAttribute('aria-hidden','false'); scrim.style.pointerEvents = 'auto';
+    animateSheet(0); setTimeout(() => $('closeSheet').focus({ preventScroll:true }), 50);
+  }
+  function closeSheet(v = 0){
+    sheetOpen = false; sheet.setAttribute('aria-hidden','true'); scrim.style.pointerEvents = 'none';
+    animateSheet(1, v); $('openSheet').focus({ preventScroll:true });
+  }
+  $('openSheet').addEventListener('click', openSheet);
+  $('closeSheet').addEventListener('click', () => closeSheet());
+  scrim.addEventListener('click', () => closeSheet());
+  addEventListener('keydown', e => { if (e.key === 'Escape' && sheetOpen) closeSheet(); });
+
+  let sDrag = null;
+  [$('grab'), $('sheetHead')].forEach(h => {
+    h.addEventListener('pointerdown', e => {
+      if (e.target.closest('.close')) return;
+      sheetAnim && sheetAnim.stop();
+      h.setPointerCapture(e.pointerId);
+      sDrag = { startY: e.clientY, startSheet: sheetY, hist: [{ t: performance.now(), y: e.clientY }] };
+    });
+    h.addEventListener('pointermove', e => {
+      if (!sDrag) return;
+      const y = sDrag.startSheet + (e.clientY - sDrag.startY) / H();
+      paintSheet(y);
+      const now = performance.now(); sDrag.hist.push({ t: now, y: e.clientY }); sDrag.hist = sDrag.hist.filter(p => now - p.t < 100);
+    });
+    const end = () => {
+      if (!sDrag) return;
+      const a = sDrag.hist[0], b = sDrag.hist[sDrag.hist.length - 1];
+      const v = (b.t - a.t) > 0 ? (b.y - a.y) / ((b.t - a.t) / 1000) : 0; // px/s
+      const projected = sheetY * H() + project(v, .99);
+      sDrag = null;
+      // decide por la proyección del gesto, no por la posición
+      projected > H() * .5 ? closeSheet(v) : (animateSheet(0, v));
+    };
+    h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+  });
+
+  /* ---------- galería: arrastre con ratón + inercia ---------- */
+  const rail = $('rail');
+  let rDrag = null;
+  rail.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse') return;       // en táctil manda el scroll nativo
+    rDrag = { x: e.clientX, s: rail.scrollLeft, hist: [{ t: performance.now(), x: e.clientX }], moved: false };
+    rail.setPointerCapture(e.pointerId);
+  });
+  rail.addEventListener('pointermove', e => {
+    if (!rDrag) return;
+    const dx = e.clientX - rDrag.x;
+    if (!rDrag.moved && Math.abs(dx) < 6) return;   // histéresis
+    rDrag.moved = true; rail.classList.add('dragging');
+    rail.scrollLeft = rDrag.s - dx;
+    const now = performance.now(); rDrag.hist.push({ t: now, x: e.clientX }); rDrag.hist = rDrag.hist.filter(p => now - p.t < 100);
+  });
+  const rEnd = () => {
+    if (!rDrag) return;
+    const a = rDrag.hist[0], b = rDrag.hist[rDrag.hist.length - 1];
+    const v = (b.t - a.t) > 0 ? -(b.x - a.x) / ((b.t - a.t) / 1000) : 0;
+    const card = rail.children[0].offsetWidth + 14;
+    const target = Math.round((rail.scrollLeft + project(v, .995)) / card) * card;
+    rDrag = null;
+    spring({ from: rail.scrollLeft, to: Math.max(0, Math.min(target, rail.scrollWidth - rail.clientWidth)), velocity: v, response: .5, onUpdate: x => rail.scrollLeft = x, onDone: () => rail.classList.remove('dragging') });
+  };
+  rail.addEventListener('pointerup', rEnd); rail.addEventListener('pointercancel', rEnd);
+  document.querySelectorAll('.rail-ctrl .nav-btn').forEach(b => b.addEventListener('click', () => {
+    const card = rail.children[0].offsetWidth + 14;
+    rail.scrollBy({ left: +b.dataset.dir * card, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
+  /* ---------- horario en vivo (hora de Colombia) ---------- */
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+  const d = now.getDay(), h = now.getHours() + now.getMinutes() / 60;
+  const open = (d >= 2 && d <= 4 && h >= 17 && h < 22) || ((d === 5 || d === 6 || d === 0) && h >= 12 && h < 23);
+  $('status').classList.toggle('open', open);
+  $('status').querySelector('span').textContent = open ? 'Abierto ahora · el horno está encendido' : (d === 1 ? 'Hoy lunes descansa el horno' : 'Cerrado ahora · abrimos pronto');
+  $('liveOpen').textContent = open ? 'Abierto ahora' : 'Cerrado ahora';
+  $('liveOpen').classList.toggle('open', open);
+
+  /* ---------- números del hero: el horno "calienta" ---------- */
+  if (!reduce){
+    const tIn = $('tIn');
+    spring({ from: 14, to: 485, damping: 1, response: 1.1, onUpdate: v => tIn.textContent = Math.round(v) + '°' });
+  }
+
+  /* ---------- apariciones ---------- */
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.rv, .oven').forEach((el, i) => {
+    const sib = [...el.parentElement.children].filter(c => c.classList.contains('rv'));
+    const k = sib.indexOf(el); if (k > 0) el.style.transitionDelay = Math.min(k * 70, 280) + 'ms';
+    io.observe(el);
+  });
+  $('yr').textContent = new Date().getFullYear();
+  renderCart();
+})();
+</script>
+</body>
+</html>

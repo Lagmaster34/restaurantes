@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tres Tiempos · Yarumal</title>
+<meta name="description" content="Tres Tiempos: desayuno, almuerzo y cena en el parque principal de Yarumal, Antioquia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Manrope:wght@400;500;600;700&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* valores iniciales (mañana); JS los interpola según la hora */
+  --bg:#dfe9ee; --bg2:#eef3f4; --ink:#1d2a33; --muted:#5a6a73; --accent:#e5a126; --accent-ink:#1d2a33; --line:rgba(29,42,51,.14);
+  --display:"Gloock", Georgia, serif;
+  --body:"Manrope", system-ui, sans-serif;
+  --mono:"Martian Mono", ui-monospace, monospace;
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-io:cubic-bezier(.77,0,.175,1);
+  --gutter:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px var(--gutter);transition:background .4s ease, backdrop-filter .4s ease}
+.nav.scrolled{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(14px) saturate(160%)}
+.brand{font-family:var(--display);font-size:1.5rem;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:.55rem}
+.brand svg{width:26px;height:26px}
+.nav ul{display:flex;gap:2rem;list-style:none}
+.nav ul a{text-decoration:none;font-weight:600;font-size:.92rem;position:relative}
+.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease-out)}
+.nav ul a:hover::after{transform:scaleX(1);transform-origin:left}
+.btn{display:inline-flex;align-items:center;gap:.6rem;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:.85rem 1.4rem;font:600 .92rem var(--body);text-decoration:none;cursor:pointer;transition:transform .16s ease-out, background .3s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn .arr{transition:transform .3s var(--ease-out)}
+@media (hover:hover){.btn:hover .arr{transform:translateX(4px)}}
+.menu-toggle{display:none}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:1fr auto;column-gap:clamp(24px,5vw,80px);row-gap:12px;align-items:center;padding:96px var(--gutter) 24px;position:relative}
+.greet{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.7rem}
+.greet .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 25%,transparent)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(3.2rem,9.2vw,8.6rem);line-height:.9;letter-spacing:-.035em;margin:1.4rem 0 1.6rem}
+h1 .swap{display:block;position:relative;height:1.8em;overflow:hidden}
+h1 .swap span{position:absolute;left:0;top:0;white-space:nowrap;transition:transform .8s var(--ease-io), opacity .6s ease}
+h1 .swap span em{font-style:italic;color:var(--accent)}
+.lede{max-width:34ch;color:var(--muted);font-size:1.08rem}
+.hero-cta{display:flex;gap:.8rem;margin-top:2rem;flex-wrap:wrap}
+
+/* arco del día */
+.dial{grid-column:1 / -1;margin-top:0;max-height:24svh;position:relative;user-select:none;touch-action:none}
+.dial svg{width:100%;height:auto;max-height:24svh;overflow:visible;display:block}
+.dial .track{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
+.dial .done{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round}
+.dial .tick text{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.06em}
+.dial .tick line{stroke:var(--line);stroke-width:1.5}
+.dial .zone{font-family:var(--display);font-size:22px;fill:var(--ink);opacity:.35;transition:opacity .4s}
+.dial .zone.on{opacity:1}
+.sun{cursor:grab}
+.sun:active{cursor:grabbing}
+.sun .halo{fill:var(--accent);opacity:.22}
+.sun .core{fill:var(--accent);transition:fill .4s}
+.sun .moon-cut{fill:var(--bg);transition:transform .6s var(--ease-io)}
+.dial-hint{position:absolute;right:0;top:-6px;color:var(--muted)}
+.dial-hint b{color:var(--ink);font-weight:500}
+
+.window{position:relative;height:min(58svh,600px);width:min(100%,calc(min(58svh,600px) * .82));justify-self:end;border-radius:999px 999px 18px 18px;overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.45);isolation:isolate}
+.window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .9s ease, transform 1.4s var(--ease-out)}
+.window .tag{position:absolute;left:18px;bottom:18px;z-index:2;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);padding:.55rem .9rem;border-radius:999px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+.window .clock{position:absolute;right:22px;bottom:12px;z-index:2;font-family:var(--display);font-size:3.2rem;color:#fff;text-shadow:0 2px 30px rgba(0,0,0,.4);letter-spacing:-.02em}
+
+/* ---------- secciones ---------- */
+section{padding:clamp(80px,12vw,160px) var(--gutter)}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:1rem}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,5.6vw,4.8rem);line-height:.98;letter-spacing:-.03em}
+h2 em{color:var(--accent);font-style:italic}
+
+/* manifiesto */
+.manifest{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);padding-top:0}
+.manifest-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:end;gap:2rem;padding:clamp(80px,10vw,130px) 0 60px;flex-wrap:wrap}
+.manifest-head p{max-width:40ch;color:var(--muted)}
+.moment{padding:2rem 2rem 2.4rem 0;border-right:1px solid var(--line);position:relative}
+.moment + .moment{padding-left:2rem}
+.moment:last-child{border-right:0}
+.moment .hrs{font-family:var(--mono);font-size:.74rem;color:var(--muted);letter-spacing:.06em}
+.moment h3{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:.7rem 0 .6rem;letter-spacing:-.02em}
+.moment p{color:var(--muted);font-size:.98rem;max-width:32ch}
+.moment .ico{width:44px;height:44px;margin-bottom:1.4rem;color:var(--accent)}
+
+/* menú */
+.menu{background:var(--bg2);border-radius:28px;margin:0 calc(var(--gutter) * .5);padding:clamp(56px,8vw,110px) calc(var(--gutter) * .5 + clamp(16px,3vw,40px))}
+.menu-top{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:3rem}
+.tabs{position:relative;display:inline-flex;background:var(--bg);border-radius:999px;padding:5px}
+.tabs button{position:relative;z-index:1;border:0;background:none;font:600 .92rem var(--body);color:var(--muted);padding:.7rem 1.3rem;border-radius:999px;cursor:pointer;transition:color .25s ease}
+.tabs button[aria-selected="true"]{color:var(--bg)}
+.tabs .pill{position:absolute;top:5px;bottom:5px;left:0;background:var(--ink);border-radius:999px;transition:transform .45s var(--ease-io), width .45s var(--ease-io)}
+.dishes{list-style:none;border-top:1px solid var(--line)}
+.dish{display:grid;grid-template-columns:3.2rem 1fr auto;gap:1rem 1.6rem;align-items:baseline;padding:1.5rem .2rem;border-bottom:1px solid var(--line);cursor:default;position:relative}
+.dish .n{grid-column:1;grid-row:1;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.dish h4{grid-column:2;grid-row:1}
+.dish h4{font-family:var(--display);font-weight:400;font-size:clamp(1.4rem,2.4vw,1.9rem);letter-spacing:-.015em;line-height:1.15;transition:transform .45s var(--ease-out)}
+.dish p{grid-column:2;color:var(--muted);font-size:.95rem;max-width:56ch;margin-top:-.4rem}
+.dish .price{font-family:var(--mono);font-size:.9rem;grid-row:1;grid-column:3;white-space:nowrap}
+.dish .thumb{display:none}
+@media (hover:hover){.dish:hover h4{transform:translateX(10px)}}
+.dishes.swapping .dish{opacity:0;transform:translateY(10px)}
+.dish{transition:opacity .35s ease, transform .45s var(--ease-out)}
+.badge{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:.28rem .5rem;border-radius:4px;margin-left:.6rem;vertical-align:middle}
+.peek{position:fixed;left:0;top:0;width:260px;aspect-ratio:4/5;border-radius:140px 140px 14px 14px;overflow:hidden;pointer-events:none;z-index:40;opacity:0;transform:translate(-50%,-50%) scale(.9);transition:opacity .25s ease;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+.peek img{width:100%;height:100%;object-fit:cover}
+.menu-note{display:flex;gap:1.2rem;align-items:center;margin-top:2.4rem;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
+
+/* galería / salón */
+.salon{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.6vw,22px);align-items:end}
+.salon .copy{grid-column:1 / span 5;padding-bottom:2rem}
+.salon .copy p{color:var(--muted);margin-top:1.4rem;max-width:38ch}
+.ph{overflow:hidden;border-radius:14px;position:relative}
+.ph img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 1.6s var(--ease-out)}
+.ph.in img{transform:scale(1)}
+.reveal-clip{clip-path:inset(100% 0 0 0);transition:clip-path 1.2s var(--ease-io)}
+.reveal-clip.in{clip-path:inset(0 0 0 0)}
+.p1{grid-column:6 / span 7;aspect-ratio:16/10}
+.p2{grid-column:1 / span 4;aspect-ratio:4/5}
+.p3{grid-column:5 / span 4;aspect-ratio:4/5;margin-bottom:12%}
+.p4{grid-column:9 / span 4;aspect-ratio:4/5}
+.ph figcaption{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.45);color:#fff;backdrop-filter:blur(6px);padding:.3rem .6rem;border-radius:6px;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* testimonios */
+.quotes{text-align:center}
+.quote-wrap{position:relative;min-height:13rem;max-width:900px;margin:2rem auto 0}
+.quote{position:absolute;inset:0;opacity:0;transform:translateY(14px);filter:blur(4px);transition:opacity .6s ease, transform .8s var(--ease-out), filter .6s ease}
+.quote.on{opacity:1;transform:none;filter:none}
+.quote blockquote{font-family:var(--display);font-size:clamp(1.6rem,3.4vw,2.6rem);line-height:1.2;letter-spacing:-.02em}
+.quote cite{display:block;margin-top:1.4rem;font-style:normal;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+.dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.6rem}
+.dots button{width:34px;height:4px;border:0;border-radius:4px;background:var(--line);cursor:pointer;position:relative;overflow:hidden;padding:0}
+.dots button i{position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left}
+.dots button.on i{animation:fill 6s linear forwards}
+@keyframes fill{to{transform:scaleX(1)}}
+
+/* reserva + mapa */
+.visit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,60px)}
+.card{background:var(--bg2);border-radius:24px;padding:clamp(24px,3.4vw,44px)}
+form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+label{display:flex;flex-direction:column;gap:.4rem;font-size:.8rem;font-weight:600;color:var(--muted)}
+label.full{grid-column:1/-1}
+input,select{font:500 1rem var(--body);color:var(--ink);background:var(--bg);border:1.5px solid transparent;border-radius:12px;padding:.85rem 1rem;transition:border-color .2s;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+.stepper{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:.35rem}
+.stepper button{width:40px;height:40px;border-radius:9px;border:0;background:var(--bg2);color:var(--ink);font-size:1.2rem;cursor:pointer;transition:transform .12s ease-out}
+.stepper button:active{transform:scale(.92)}
+.stepper output{font-family:var(--display);font-size:1.5rem;min-width:2ch;text-align:center;display:inline-block}
+.stepper output.bump{animation:bump .3s var(--ease-out)}
+@keyframes bump{from{transform:translateY(-8px);opacity:.2}}
+form .btn{grid-column:1/-1;justify-content:center;padding:1rem}
+.form-ok{grid-column:1/-1;font-size:.92rem;color:var(--ink);min-height:1.4em}
+.map{border-radius:24px;overflow:hidden;position:relative;min-height:420px;display:flex;flex-direction:column;background:var(--bg2)}
+.map iframe{flex:1;border:0;width:100%;min-height:340px;transition:filter .6s ease}
+body.is-night .map iframe{filter:invert(.9) hue-rotate(180deg) saturate(.7) brightness(.95)}
+.map-info{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.4rem 1.6rem}
+.map-info b{display:block;font-family:var(--display);font-weight:400;font-size:1.15rem;margin-top:.2rem}
+.map-info span{color:var(--muted);font-size:.85rem}
+
+/* footer */
+footer{padding:80px var(--gutter) 36px;border-top:1px solid var(--line);margin-top:40px}
+.foot-big{font-family:var(--display);font-size:clamp(3.5rem,14vw,13rem);line-height:.85;letter-spacing:-.05em;white-space:nowrap}
+.foot-big em{color:var(--accent)}
+.foot-row{display:flex;justify-content:space-between;align-items:center;gap:1.4rem;flex-wrap:wrap;margin-top:3rem;color:var(--muted);font-size:.9rem}
+.foot-row a{text-decoration:none;font-weight:600;color:var(--ink)}
+.credit a{background:linear-gradient(var(--accent),var(--accent)) 0 100%/0 2px no-repeat;transition:background-size .4s var(--ease-out)}
+.credit a:hover{background-size:100% 2px}
+.socials{display:flex;gap:1.2rem}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease, transform 1s var(--ease-out)}
+.rv.in{opacity:1;transform:none}
+
+/* responsive */
+@media (max-width:900px){
+  .nav ul{display:none}
+  .hero{grid-template-columns:1fr;padding-top:100px}
+  .window{max-width:440px;width:100%;height:auto;justify-self:center;aspect-ratio:1/1;order:-1}
+  .hero{grid-template-rows:auto}
+  .manifest{grid-template-columns:1fr}
+  .moment,.moment + .moment{border-right:0;border-bottom:1px solid var(--line);padding:2rem 0}
+  .salon .copy,.p1,.p2,.p3,.p4{grid-column:1/-1}
+  .p2,.p3,.p4{aspect-ratio:16/11;margin:0}
+  .visit{grid-template-columns:1fr}
+  .dish{grid-template-columns:1fr auto}
+  .dish .n{display:none}
+  .dish h4{grid-column:1}
+  .dish .price{grid-column:2}
+  .dish p{grid-column:1 / -1;margin-top:0}
+  .dish .thumb{display:block;grid-column:1/-1;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-top:.4rem}
+  .peek{display:none}
+  .dial-hint{position:static;margin-bottom:8px;display:block}
+  .dial .zone{font-size:48px}
+  .dial .tick text{display:none}
+  .dial .track{stroke-width:4;stroke-dasharray:4 14}
+  .dial .done{stroke-width:7}
+  #sunInner{transform:scale(2.1)}
+  .dial svg{max-height:none;margin-top:6px}
+  .dial{max-height:none}
+  .map-info{grid-template-columns:1fr}
+  .menu-top .tabs{width:100%}
+  .tabs button{flex:1;padding:.7rem .6rem}
+}
+@media (max-width:520px){
+  form{grid-template-columns:1fr}
+  .window .clock{font-size:2.4rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}
+  .rv,.reveal-clip{transform:none;clip-path:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Tres Tiempos, inicio">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22a13 13 0 0 1 26 0"/><circle cx="16" cy="22" r="4" fill="currentColor"/><path d="M1 27h30"/></svg>
+    Tres Tiempos
+  </a>
+  <ul>
+    <li><a href="#momentos">Momentos</a></li>
+    <li><a href="#carta">Carta</a></li>
+    <li><a href="#salon">El salón</a></li>
+    <li><a href="#visita">Visítanos</a></li>
+  </ul>
+  <a class="btn" href="#visita">Reservar mesa <span class="arr">→</span></a>
+</nav>
+
+<header class="hero" id="top">
+  <div>
+    <span class="greet"><span class="dot"></span><span id="liveTime">Yarumal · --:--</span></span>
+    <h1>
+      <span class="swap" id="swap">
+        <span data-p="0">Buenos<br><em>días.</em></span>
+        <span data-p="1">Buen<br><em>provecho.</em></span>
+        <span data-p="2">Buenas<br><em>noches.</em></span>
+      </span>
+    </h1>
+    <p class="lede" id="lede">Desayuno, almuerzo y cena frente al parque principal de Yarumal. La carta cambia con la luz del día.</p>
+    <div class="hero-cta">
+      <a class="btn" href="#carta">Ver la carta de ahora <span class="arr">→</span></a>
+      <a class="btn ghost" href="https://wa.me/573105550142" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    </div>
+  </div>
+
+  <figure class="window" aria-hidden="true">
+    <img src="img/hero-desayuno.jpg" alt="" data-w="0">
+    <img src="img/hero-almuerzo.jpg" alt="" data-w="1" style="opacity:0">
+    <img src="img/hero-cena.jpg" alt="" data-w="2" style="opacity:0">
+    <span class="clock" id="bigClock">7:00</span>
+    <span class="tag" id="winTag">Servimos desayuno</span>
+  </figure>
+
+  <div class="dial" id="dial">
+    <span class="dial-hint mono">Arrastra el sol · <b id="dialHour">7:00</b></span>
+    <svg viewBox="0 0 1200 190" role="slider" aria-label="Hora del día" aria-valuemin="6" aria-valuemax="23" aria-valuenow="7" tabindex="0" id="dialSvg">
+      <path id="arc" class="track" d="M40 170 C 300 -30, 900 -30, 1160 170"/>
+      <path id="arcDone" class="done" d="M40 170 C 300 -30, 900 -30, 1160 170"/>
+      <g id="ticks"></g>
+      <text class="zone" x="170" y="186" text-anchor="middle" data-z="0">Mañana</text>
+      <text class="zone" x="600" y="186" text-anchor="middle" data-z="1">Mediodía</text>
+      <text class="zone" x="1030" y="186" text-anchor="middle" data-z="2">Noche</text>
+      <g class="sun" id="sun">
+        <g id="sunInner">
+          <circle class="halo" r="26"/>
+          <circle class="core" r="13"/>
+          <circle class="moon-cut" r="11" id="moonCut" transform="translate(28,-6)"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<section id="momentos" style="padding-top:0;padding-bottom:0">
+  <div class="manifest">
+    <div class="manifest-head rv">
+      <h2>Una cocina,<br><em>tres</em> momentos.</h2>
+      <p>Abrimos con el primer tinto de la mañana y cerramos con la última copa. Cada franja tiene su propia carta, su propia luz y su propio ritmo.</p>
+    </div>
+    <article class="moment rv">
+      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 30a16 16 0 0 1 32 0"/><path d="M22 6v5M8 14l3.5 3.5M36 14l-3.5 3.5M2 36h40"/></svg>
+      <span class="hrs">6:30 — 11:00</span>
+      <h3>Desayuno</h3>
+      <p>Calentado paisa, arepa de chócolo recién asada, chocolate con queso y café de fincas del norte antioqueño.</p>
+    </article>
+    <article class="moment rv">
+      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><circle cx="22" cy="22" r="8"/><path d="M22 3v5M22 36v5M3 22h5M36 22h5M8.5 8.5l3.5 3.5M32 32l3.5 3.5M8.5 35.5 12 32M32 12l3.5-3.5"/></svg>
+      <span class="hrs">12:00 — 15:30</span>
+      <h3>Almuerzo</h3>
+      <p>Menú del día con sopa, principio y jugo natural. Platos de la casa para quien tiene tiempo de quedarse.</p>
+    </article>
+    <article class="moment rv">
+      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 30A13 13 0 0 1 17 9a13 13 0 1 0 17 17 13 13 0 0 1-4 4Z"/><path d="M34 6v4M32 8h4"/></svg>
+      <span class="hrs">18:00 — 22:30</span>
+      <h3>Cena</h3>
+      <p>Carnes a la brasa, trucha de la región y coctelería con lulo, panela y aguardiente. Luz baja, mesas largas.</p>
+    </article>
+  </div>
+</section>
+
+<section id="carta" style="padding-left:0;padding-right:0">
+  <div class="menu">
+    <div class="menu-top">
+      <div class="rv">
+        <span class="eyebrow">La carta</span>
+        <h2 id="menuTitle">Para empezar<br><em>el día.</em></h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Carta por momento">
+        <span class="pill" id="pill"></span>
+        <button role="tab" aria-selected="true" data-t="0">Desayuno</button>
+        <button role="tab" aria-selected="false" data-t="1">Almuerzo</button>
+        <button role="tab" aria-selected="false" data-t="2">Cena</button>
+      </div>
+    </div>
+    <ul class="dishes" id="dishes" role="tabpanel"></ul>
+    <div class="menu-note">
+      <span class="mono">Precios en pesos colombianos · IVA incluido</span>
+      <span>¿Alergias o restricciones? Díselo a tu mesero y adaptamos el plato.</span>
+    </div>
+  </div>
+</section>
+
+<div class="peek" id="peek" aria-hidden="true"><img alt="" id="peekImg"></div>
+
+<section id="salon">
+  <div class="salon">
+    <div class="copy rv">
+      <span class="eyebrow">El salón</span>
+      <h2>Frente al parque,<br>a <em>2.265</em> metros.</h2>
+      <p>Yarumal es fría, y por eso aquí la cocina siempre está encendida. Madera, luz cálida y ventanales que miran a la plaza: se viene por el desayuno y uno termina quedándose a almorzar.</p>
+    </div>
+    <figure class="ph reveal-clip p1"><img src="img/salon.jpg" alt="Salón del restaurante con mesas de madera y luz cálida" loading="lazy"><figcaption>Salón principal · 60 puestos</figcaption></figure>
+    <figure class="ph reveal-clip p2"><img src="img/d3.jpg" alt="Dos tazas de café con arte latte" loading="lazy"><figcaption>Café del norte antioqueño</figcaption></figure>
+    <figure class="ph reveal-clip p3"><img src="img/a4.jpg" alt="Mesa servida con varios platos para compartir" loading="lazy"><figcaption>Almuerzos para compartir</figcaption></figure>
+    <figure class="ph reveal-clip p4"><img src="img/c4.jpg" alt="Barra del bar con luces cálidas por la noche" loading="lazy"><figcaption>La barra, de noche</figcaption></figure>
+  </div>
+</section>
+
+<section class="quotes">
+  <span class="eyebrow rv">Lo que dicen en la mesa</span>
+  <div class="quote-wrap" id="quotes">
+    <div class="quote on"><blockquote>“Vine por un calentado a las ocho y me fui a las tres después del almuerzo. No me arrepiento de nada.”</blockquote><cite>Mariana R. · Medellín</cite></div>
+    <div class="quote"><blockquote>“La trucha al ajillo es la mejor que he probado en el norte. Y el cóctel de lulo con aguardiente, peligroso.”</blockquote><cite>Andrés F. · Yarumal</cite></div>
+    <div class="quote"><blockquote>“El menú del día sabe a casa, pero servido con cariño de restaurante. Vamos cada semana con la oficina.”</blockquote><cite>Luisa G. · Santa Rosa de Osos</cite></div>
+  </div>
+  <div class="dots" id="qdots"><button aria-label="Opinión 1" class="on"><i></i></button><button aria-label="Opinión 2"><i></i></button><button aria-label="Opinión 3"><i></i></button></div>
+</section>
+
+<section id="visita">
+  <div class="visit">
+    <div class="card rv">
+      <span class="eyebrow">Reservas</span>
+      <h2>Guarda tu <em>mesa.</em></h2>
+      <form id="form" novalidate>
+        <label class="full">Nombre<input name="n" required placeholder="¿A nombre de quién?" autocomplete="name"></label>
+        <label>Fecha<input type="date" name="d" required id="date"></label>
+        <label>Momento
+          <select name="m" id="momentSel">
+            <option value="Desayuno">Desayuno</option>
+            <option value="Almuerzo">Almuerzo</option>
+            <option value="Cena">Cena</option>
+          </select>
+        </label>
+        <label class="full">Personas
+          <div class="stepper"><button type="button" data-s="-1" aria-label="Menos personas">−</button><output id="pax">2</output><button type="button" data-s="1" aria-label="Más personas">+</button></div>
+        </label>
+        <button class="btn" type="submit">Confirmar por WhatsApp <span class="arr">→</span></button>
+        <p class="form-ok" id="formOk" role="status"></p>
+      </form>
+    </div>
+    <div class="map rv">
+      <iframe title="Mapa de Tres Tiempos en Yarumal, Antioquia" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Parque%20Principal%20Yarumal%2C%20Antioquia&z=16&output=embed"></iframe>
+      <div class="map-info">
+        <div><span>Dirección</span><b>Cl. 20 #19-35, Parque Principal</b></div>
+        <div><span>Horario</span><b>Mar a dom · 6:30–22:30</b></div>
+        <div><span>Teléfono</span><b><a href="tel:+573105550142" style="text-decoration:none">310 555 0142</a></b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-big" aria-hidden="true">Tres <em>Tiempos</em></div>
+  <div class="foot-row">
+    <span>Yarumal, Antioquia · © <span id="yr"></span></span>
+    <div class="socials"><a href="#">Instagram</a><a href="#">Facebook</a><a href="https://wa.me/573105550142">WhatsApp</a></div>
+    <span class="credit">Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+
+  /* ---------- paletas por momento ---------- */
+  const P = [
+    { at:7,  bg:'#dfe9ee', bg2:'#f1f5f6', ink:'#1d2a33', muted:'#56666f', accent:'#e2a023', accentInk:'#1d2a33', line:'rgba(29,42,51,.14)' },
+    { at:13, bg:'#ecead6', bg2:'#f7f5e8', ink:'#27261b', muted:'#6b6853', accent:'#c4432a', accentInk:'#fff8ee', line:'rgba(39,38,27,.14)' },
+    { at:20, bg:'#131a30', bg2:'#1c2542', ink:'#f1eadb', muted:'#a3a8bb', accent:'#f0b35a', accentInk:'#131a30', line:'rgba(241,234,219,.14)' },
+  ];
+  const hex = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+  const mix = (a,b,t) => { const A=hex(a),B=hex(b); return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`; };
+  const smooth = t => t*t*(3-2*t);
+
+  function weights(h){
+    // mañana hasta 10, transición 10→12.5, mediodía hasta 16, transición 16→18.5, noche
+    if (h <= 10) return [0,0,0];
+    if (h < 12.5) return [0,1,smooth((h-10)/2.5)];
+    if (h <= 16) return [1,1,0];
+    if (h < 18.5) return [1,2,smooth((h-16)/2.5)];
+    return [2,2,0];
+  }
+  const phaseOf = h => h < 11.5 ? 0 : h < 17.5 ? 1 : 2;
+
+  const imgs = [...document.querySelectorAll('.window img')];
+  const swapSpans = [...document.querySelectorAll('#swap span')];
+  const zones = [...document.querySelectorAll('.zone')];
+  const tagTxt = ['Servimos desayuno','Hora del almuerzo','Cena y coctelería'];
+  const ledes = [
+    'Desayuno, almuerzo y cena frente al parque principal de Yarumal. La carta cambia con la luz del día.',
+    'A esta hora sale el menú del día: sopa, principio, proteína y jugo natural. Y la carta completa de la casa.',
+    'Luz baja, carnes a la brasa y coctelería con sabores de la montaña. La cocina cierra a las 22:30.'
+  ];
+  let currentPhase = -1;
+
+  const fmt = h => { const H=Math.floor(h), M=Math.round((h-H)*60/5)*5; const hh = M===60?H+1:H; return `${hh}:${String(M===60?0:M).padStart(2,'0')}`; };
+
+  function applyHour(h){
+    const [a,b,t] = weights(h);
+    const pa=P[a], pb=P[b];
+    root.style.setProperty('--bg', mix(pa.bg,pb.bg,t));
+    root.style.setProperty('--bg2', mix(pa.bg2,pb.bg2,t));
+    root.style.setProperty('--ink', mix(pa.ink,pb.ink,t));
+    root.style.setProperty('--muted', mix(pa.muted,pb.muted,t));
+    root.style.setProperty('--accent', mix(pa.accent,pb.accent,t));
+    const tt = t < .5 ? 0 : 1;
+    root.style.setProperty('--accent-ink', [pa,pb][tt].accentInk);
+    root.style.setProperty('--line', [pa,pb][tt].line);
+    imgs.forEach((im,i) => { const w = (i===a?1-t:0) + (i===b?t:0); im.style.opacity = a===b ? (i===a?1:0) : w; im.style.transform = `scale(${1.02 + (1-w)*0.06})`; });
+    document.body.classList.toggle('is-night', a===2 || (b===2 && t>.5));
+
+    const ph = phaseOf(h);
+    if (ph !== currentPhase){
+      swapSpans.forEach((s,i) => { s.style.transform = `translateY(${(i-ph)*110}%)`; s.style.opacity = i===ph?1:0; });
+      zones.forEach((z,i)=>z.classList.toggle('on', i===ph));
+      document.getElementById('winTag').textContent = tagTxt[ph];
+      document.getElementById('lede').textContent = ledes[ph];
+      document.getElementById('moonCut').style.transform = ph===2 ? 'translate(6px,-5px)' : 'translate(28px,-6px)';
+      if (currentPhase !== -1) setTab(ph); else setTab(ph, true);
+      document.getElementById('momentSel').selectedIndex = ph;
+      currentPhase = ph;
+    }
+    const f = fmt(h);
+    document.getElementById('bigClock').textContent = f;
+    document.getElementById('dialHour').textContent = f;
+    dialSvg.setAttribute('aria-valuenow', h.toFixed(1));
+    dialSvg.setAttribute('aria-valuetext', f);
+    placeSun(h);
+  }
+
+  /* ---------- arco / sol ---------- */
+  const arc = document.getElementById('arc'), arcDone = document.getElementById('arcDone');
+  const sun = document.getElementById('sun'), dialSvg = document.getElementById('dialSvg');
+  const L = arc.getTotalLength();
+  const H0 = 6, H1 = 23;
+  arcDone.style.strokeDasharray = L;
+  const ticks = document.getElementById('ticks');
+  [6,9,12,15,18,21].forEach(h => {
+    const p = arc.getPointAtLength((h-H0)/(H1-H0)*L);
+    ticks.insertAdjacentHTML('beforeend', `<g class="tick"><line x1="${p.x}" y1="${p.y-7}" x2="${p.x}" y2="${p.y+7}"/><text x="${p.x}" y="${p.y-16}" text-anchor="middle">${h}:00</text></g>`);
+  });
+  function placeSun(h){
+    const len = (h-H0)/(H1-H0)*L;
+    const p = arc.getPointAtLength(len);
+    sun.setAttribute('transform', `translate(${p.x},${p.y})`);
+    arcDone.style.strokeDashoffset = L - len;
+  }
+
+  // arrastre directo: el sol sigue al puntero sobre el arco
+  let hour = 7, target = 7, raf = null, dragging = false;
+  const samples = [...Array(171)].map((_,i)=>{ const p = arc.getPointAtLength(i/170*L); return {x:p.x,y:p.y,h:H0+i/170*(H1-H0)}; });
+  function hourFromPointer(e){
+    const pt = dialSvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const loc = pt.matrixTransform(dialSvg.getScreenCTM().inverse());
+    let best = samples[0], bd = Infinity;
+    for (const s of samples){ const d = (s.x-loc.x)**2 + (s.y-loc.y)**2*0.25; if (d<bd){bd=d;best=s;} }
+    return best.h;
+  }
+  function animateTo(h, instant){
+    target = Math.min(H1, Math.max(H0, h));
+    if (instant || reduce){ hour = target; applyHour(hour); return; }
+    if (!raf) raf = requestAnimationFrame(step);
+  }
+  function step(){
+    hour += (target - hour) * (dragging ? .35 : .12);
+    if (Math.abs(target-hour) < .002) hour = target;
+    applyHour(hour);
+    raf = hour === target ? null : requestAnimationFrame(step);
+  }
+  dialSvg.addEventListener('pointerdown', e => { dragging = true; dialSvg.setPointerCapture(e.pointerId); animateTo(hourFromPointer(e)); });
+  dialSvg.addEventListener('pointermove', e => { if (dragging) animateTo(hourFromPointer(e)); });
+  const end = () => { dragging = false; };
+  dialSvg.addEventListener('pointerup', end); dialSvg.addEventListener('pointercancel', end);
+  dialSvg.addEventListener('keydown', e => {
+    const k = {ArrowRight:.5, ArrowUp:.5, ArrowLeft:-.5, ArrowDown:-.5}[e.key];
+    if (k){ e.preventDefault(); animateTo(target + k, true); }
+  });
+
+  /* ---------- hora real de Yarumal ---------- */
+  function bogotaHour(){
+    const s = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
+    const [H,M] = s.split(':').map(Number); return {H,M,s};
+  }
+  function tickClock(){ const {s} = bogotaHour(); document.getElementById('liveTime').textContent = `Yarumal · ${s}`; }
+  tickClock(); setInterval(tickClock, 30000);
+
+  /* ---------- carta ---------- */
+  const MENU = [
+    { title:'Para empezar<br><em>el día.</em>', items:[
+      ['Calentado paisa','Frijol, arroz y carne desmechada de la víspera, huevo frito, hogao y arepa de chócolo.','18.900','d4','Favorito'],
+      ['Huevos al plato con hogao','Dos huevos de gallina campesina sobre hogao de tomate chonto, pan de masa madre tostado.','16.500','d1'],
+      ['Tostadas de panela','Pan brioche empapado en leche y panela, queso campesino, frutos rojos y miel de caña.','17.900','d2'],
+      ['Chocolate con queso','Chocolate de mesa batido con molinillo, queso fresco para derretir y almojábana tibia.','9.800','d3'],
+      ['Tinto del norte','Café de origen de fincas de Yarumal y Angostura, en greca o filtrado a mano.','4.500','d3'],
+    ]},
+    { title:'El almuerzo,<br><em>sin prisa.</em>', items:[
+      ['Menú del día','Sopa de la casa, principio, proteína del día, arroz, ensalada y jugo natural. Cambia cada día.','22.000','a4','Diario'],
+      ['Bowl de trucha ahumada','Trucha de Yarumal ahumada en casa, quinua, aguacate, encurtidos y vinagreta de maracuyá.','29.900','a1'],
+      ['Posta negra cartagenera','Posta de res en salsa de panela y cerveza, arroz con coco y tajadas de maduro.','32.000','a2'],
+      ['Mesa para compartir','Chicharrón, chorizo de Santa Rosa, arepitas, guacamole y ají de la casa. Para dos o tres.','44.000','a3'],
+    ]},
+    { title:'Cuando baja<br><em>la luz.</em>', items:[
+      ['Lomo a la brasa','300 g de lomo fino, chimichurri de cilantro cimarrón, papa criolla crocante.','46.000','c1','Del chef'],
+      ['Costillas en panela','Costillas de cerdo glaseadas lentamente en panela y ají dulce, puré de ahuyama.','39.000','c2'],
+      ['Trucha al ajillo','Trucha entera dorada en mantequilla de ajo, patacón y ensalada de hojas.','38.000','c3'],
+      ['Lulo y aguardiente','Coctel de la casa: lulo macerado, aguardiente antioqueño, panela y hierbabuena.','24.000','c4'],
+    ]},
+  ];
+  const dishes = document.getElementById('dishes');
+  const tabs = [...document.querySelectorAll('.tabs button')];
+  const pill = document.getElementById('pill');
+  let tabNow = -1, swapTimer;
+  function movePill(i){ const b = tabs[i]; pill.style.width = b.offsetWidth+'px'; pill.style.transform = `translateX(${b.offsetLeft-5+5}px)`; }
+  function render(i){
+    dishes.innerHTML = MENU[i].items.map((d,k)=>`
+      <li class="dish" data-img="img/${d[3]}.jpg">
+        <span class="n">${String(k+1).padStart(2,'0')}</span>
+        <h4>${d[0]}${d[4]?`<span class="badge">${d[4]}</span>`:''}</h4>
+        <span class="price">$${d[2]}</span>
+        <p>${d[1]}</p>
+        <img class="thumb" src="img/${d[3]}.jpg" alt="${d[0]}" loading="lazy">
+      </li>`).join('');
+    document.getElementById('menuTitle').innerHTML = MENU[i].title;
+    bindPeek();
+  }
+  function setTab(i, instant){
+    if (i === tabNow) return;
+    tabNow = i;
+    tabs.forEach((b,k)=>b.setAttribute('aria-selected', k===i));
+    movePill(i);
+    clearTimeout(swapTimer);
+    if (instant || reduce){ render(i); return; }
+    dishes.classList.add('swapping');
+    swapTimer = setTimeout(()=>{ render(i);
+      [...dishes.children].forEach((li,k)=>{ li.style.transitionDelay = (k*50)+'ms'; });
+      requestAnimationFrame(()=>requestAnimationFrame(()=>dishes.classList.remove('swapping')));
+      setTimeout(()=>[...dishes.children].forEach(li=>li.style.transitionDelay=''), 700);
+    }, 260);
+  }
+  tabs.forEach((b,i)=>b.addEventListener('click',()=>setTab(i)));
+  addEventListener('resize', ()=>movePill(tabNow));
+
+  // vista previa que sigue al cursor con inercia
+  const peek = document.getElementById('peek'), peekImg = document.getElementById('peekImg');
+  let px=0,py=0,tx=0,ty=0,peekRaf=null,peekOn=false;
+  function peekLoop(){ px+=(tx-px)*.16; py+=(ty-py)*.16; const r=(tx-px)*.04;
+    peek.style.transform=`translate(${px-130}px,${py-160}px) rotate(${Math.max(-8,Math.min(8,r))}deg) scale(${peekOn?1:.9})`;
+    peekRaf = (peekOn || Math.abs(tx-px)>.5) ? requestAnimationFrame(peekLoop) : null; }
+  function bindPeek(){
+    if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    dishes.querySelectorAll('.dish').forEach(li=>{
+      li.addEventListener('mouseenter',e=>{ peekImg.src=li.dataset.img; peekOn=true; peek.style.opacity=1; if(!px){px=tx=e.clientX;py=ty=e.clientY;} if(!peekRaf) peekRaf=requestAnimationFrame(peekLoop); });
+      li.addEventListener('mouseleave',()=>{ peekOn=false; peek.style.opacity=0; });
+    });
+  }
+  addEventListener('mousemove',e=>{ tx=e.clientX+140; ty=e.clientY; });
+
+  /* ---------- testimonios ---------- */
+  const qs=[...document.querySelectorAll('.quote')], qd=[...document.querySelectorAll('#qdots button')];
+  let qi=0, qt;
+  function showQ(i){ qs[qi].classList.remove('on'); qd[qi].classList.remove('on'); qi=i; qs[qi].classList.add('on'); void qd[qi].offsetWidth; qd[qi].classList.add('on'); clearTimeout(qt); qt=setTimeout(()=>showQ((qi+1)%qs.length),6000); }
+  qd.forEach((b,i)=>b.addEventListener('click',()=>showQ(i)));
+  qt=setTimeout(()=>showQ(1),6000);
+
+  /* ---------- reserva ---------- */
+  let pax=2; const paxEl=document.getElementById('pax');
+  document.querySelectorAll('.stepper button').forEach(b=>b.addEventListener('click',()=>{
+    pax=Math.min(20,Math.max(1,pax+ +b.dataset.s)); paxEl.textContent=pax; paxEl.classList.remove('bump'); void paxEl.offsetWidth; paxEl.classList.add('bump');
+  }));
+  const date=document.getElementById('date'); const today=new Date(); date.min=today.toLocaleDateString('en-CA'); date.value=date.min;
+  document.getElementById('form').addEventListener('submit',e=>{
+    e.preventDefault(); const f=e.target, ok=document.getElementById('formOk');
+    if(!f.n.value.trim()){ ok.textContent='Escribe el nombre de la reserva para continuar.'; f.n.focus(); return; }
+    const msg=`Hola Tres Tiempos, quiero reservar: ${f.m.value} para ${pax} persona${pax>1?'s':''} el ${f.d.value}, a nombre de ${f.n.value.trim()}.`;
+    ok.textContent='Abriendo WhatsApp con tu reserva lista…';
+    window.open('https://wa.me/573105550142?text='+encodeURIComponent(msg),'_blank','noopener');
+  });
+
+  /* ---------- scroll ---------- */
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30),{passive:true});
+  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} }),{rootMargin:'0px 0px -10% 0px'});
+  document.querySelectorAll('.rv,.reveal-clip').forEach((el,i)=>{ if(el.classList.contains('moment')) el.style.transitionDelay=(i%3*90)+'ms'; io.observe(el); });
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  /* ---------- arranque: hora real, con un barrido de entrada ---------- */
+  const {H,M} = bogotaHour();
+  const real = Math.min(22.5, Math.max(6.2, H + M/60));
+  applyHour(6.2);
+  requestAnimationFrame(()=>movePill(tabNow));
+  setTimeout(()=>animateTo(real), reduce?0:500);
+  document.fonts && document.fonts.ready.then(()=>movePill(tabNow));
+})();
+</script>
+</body>
+</html>

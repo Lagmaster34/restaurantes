@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demos para restaurantes · Yarumal</title>
+<style>
+:root{--bg:#f3f4f6;--ink:#121418;--muted:#5d636d;--line:rgba(18,20,24,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:clamp(24px,6vw,72px) clamp(16px,5vw,64px)}
+h1{font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1}
+p.sub{color:var(--muted);margin:.8rem 0 2.4rem;max-width:52ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+a.card{display:block;text-decoration:none;color:inherit;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 0 0 1px var(--line);transition:transform .16s ease-out, box-shadow .2s ease}
+a.card:active{transform:scale(.98)}
+@media (hover:hover){a.card:hover{box-shadow:0 0 0 1px var(--line),0 24px 40px -24px rgba(0,0,0,.35)}}
+a.card img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+a.card div{padding:18px 20px 20px}
+a.card b{font-size:1.2rem;letter-spacing:-.02em}
+a.card span{display:block;color:var(--muted);font-size:.93rem;margin-top:.2rem}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
+footer a{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<h1>Demos para restaurantes</h1>
+<p class="sub">Tres landing pages de ejemplo para negocios de comida en Yarumal, Antioquia.</p>
+<div class="grid">
+  <a class="card" href="tres-tiempos/"><img src="tres-tiempos/img/hero-desayuno.jpg" alt=""><div><b>Tres Tiempos</b><span>Desayuno, almuerzo y cena · la web cambia con la hora del día</span></div></a>
+  <a class="card" href="fogon-de-rosa/"><img src="fogon-de-rosa/img/hero.jpg" alt=""><div><b>El Fogón de Rosa</b><span>Comida casera · arma tu corrientazo en un plato de peltre</span></div></a>
+  <a class="card" href="forno-2265/"><img src="forno-2265/img/hero.jpg" alt=""><div><b>Forno 2265</b><span>Pizzería · gira la pizza para recorrer la carta</span></div></a>
+</div>
+<footer>Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></footer>
+</body>
+</html>
