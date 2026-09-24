@@ -4,31 +4,42 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demos para restaurantes · Yarumal</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2712%27 fill=%27%23e8a14a%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f4f6;--ink:#121418;--muted:#5d636d;--line:rgba(18,20,24,.1)}
+:root{--bg:#0e0e0f;--ink:#f3efe8;--muted:rgba(243,239,232,.6);--line:rgba(243,239,232,.12)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:400 17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:clamp(24px,6vw,72px) clamp(16px,5vw,64px)}
-h1{font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1}
-p.sub{color:var(--muted);margin:.8rem 0 2.4rem;max-width:52ch}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-a.card{display:block;text-decoration:none;color:inherit;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 0 0 1px var(--line);transition:transform .16s ease-out, box-shadow .2s ease}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 "Geist",system-ui,sans-serif;padding:clamp(24px,5vw,64px) clamp(16px,4vw,56px);-webkit-font-smoothing:antialiased}
+header{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:clamp(32px,5vw,64px)}
+h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(3rem,8vw,7rem);line-height:.9;letter-spacing:-.03em}
+h1 em{font-style:italic;color:#e8a14a}
+header p{color:var(--muted);max-width:36ch}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+a.card{position:relative;display:block;aspect-ratio:3/4;border-radius:22px;overflow:hidden;text-decoration:none;color:#fff;isolation:isolate;transition:transform .16s ease-out}
 a.card:active{transform:scale(.98)}
-@media (hover:hover){a.card:hover{box-shadow:0 0 0 1px var(--line),0 24px 40px -24px rgba(0,0,0,.35)}}
-a.card img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
-a.card div{padding:18px 20px 20px}
-a.card b{font-size:1.2rem;letter-spacing:-.02em}
-a.card span{display:block;color:var(--muted);font-size:.93rem;margin-top:.2rem}
-footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
+a.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;transition:transform 1.2s cubic-bezier(.23,1,.32,1)}
+a.card::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 40%,rgba(0,0,0,.8))}
+@media (hover:hover){a.card:hover img{transform:scale(1.06)}}
+a.card div{position:absolute;left:22px;right:22px;bottom:22px}
+a.card small{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+a.card b{display:block;font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(2rem,3vw,2.8rem);line-height:1;margin:.4rem 0 .5rem}
+a.card span{font-size:.92rem;opacity:.85}
+footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
 footer a{color:var(--ink);font-weight:600}
+@media (max-width:860px){.grid{grid-template-columns:1fr}a.card{aspect-ratio:4/3}}
 </style>
 </head>
 <body>
-<h1>Demos para restaurantes</h1>
-<p class="sub">Tres landing pages de ejemplo para negocios de comida en Yarumal, Antioquia.</p>
+<header>
+  <h1>Tres cocinas,<br><em>una montaña.</em></h1>
+  <p>Landing pages de demostración para restaurantes de Yarumal, Antioquia.</p>
+</header>
 <div class="grid">
-  <a class="card" href="tres-tiempos/"><img src="tres-tiempos/img/hero-desayuno.jpg" alt=""><div><b>Tres Tiempos</b><span>Desayuno, almuerzo y cena · la web cambia con la hora del día</span></div></a>
-  <a class="card" href="fogon-de-rosa/"><img src="fogon-de-rosa/img/hero.jpg" alt=""><div><b>El Fogón de Rosa</b><span>Comida casera · arma tu corrientazo en un plato de peltre</span></div></a>
-  <a class="card" href="forno-2265/"><img src="forno-2265/img/hero.jpg" alt=""><div><b>Forno 2265</b><span>Pizzería · gira la pizza para recorrer la carta</span></div></a>
+  <a class="card" href="tres-tiempos/"><img src="tres-tiempos/img/amanecer.jpg" alt=""><div><small>Desayuno · almuerzo · cena</small><b>Tres Tiempos</b><span>Al hacer scroll pasa un día entero, del amanecer a las estrellas.</span></div></a>
+  <a class="card" href="fogon-de-rosa/"><img src="fogon-de-rosa/img/fuego-olla.jpg" alt=""><div><small>Comida casera</small><b>El Fogón de Rosa</b><span>Fuego lento: chispas, la olla del sancocho y el recetario de la abuela.</span></div></a>
+  <a class="card" href="forno-2265/"><img src="forno-2265/img/fuego.jpg" alt=""><div><small>Pizzería napolitana</small><b>Forno 2265</b><span>Del frío de Yarumal al horno a 485°. Gira la pizza para ver la carta.</span></div></a>
 </div>
 <footer>Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></footer>
 </body>

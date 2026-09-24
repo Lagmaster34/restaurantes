@@ -4,635 +4,726 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tres Tiempos · Yarumal</title>
-<meta name="description" content="Tres Tiempos: desayuno, almuerzo y cena en el parque principal de Yarumal, Antioquia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2712%27 fill=%27%23e2a023%27/%3E%3C/svg%3E">
+<meta name="description" content="Tres Tiempos: desayuno, almuerzo y cena frente al parque principal de Yarumal, Antioquia. Un día entero en una mesa.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Manrope:wght@400;500;600;700&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* valores iniciales (mañana); JS los interpola según la hora */
-  --bg:#dfe9ee; --bg2:#eef3f4; --ink:#1d2a33; --muted:#5a6a73; --accent:#e5a126; --accent-ink:#1d2a33; --line:rgba(29,42,51,.14);
-  --display:"Gloock", Georgia, serif;
-  --body:"Manrope", system-ui, sans-serif;
-  --mono:"Martian Mono", ui-monospace, monospace;
-  --ease-out:cubic-bezier(.23,1,.32,1);
-  --ease-io:cubic-bezier(.77,0,.175,1);
-  --gutter:clamp(16px,4vw,56px);
+  --ink:#1b1a17; --ink-2:rgba(27,26,23,.62); --line:rgba(27,26,23,.16); --paper:rgba(255,255,255,.55);
+  --sky-top:#1b1f3a; --sky-bot:#6b4a6e;
+  --accent:#d9572b;
+  --serif:"Instrument Serif", "Times New Roman", serif;
+  --sans:"Geist", system-ui, sans-serif;
+  --mono:"Geist Mono", ui-monospace, monospace;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --g:clamp(18px,4vw,64px);
 }
+html[data-night="1"]{ --ink:#f1ebdd; --ink-2:rgba(241,235,221,.62); --line:rgba(241,235,221,.18); --paper:rgba(20,24,48,.55); --accent:#f2b35c }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;background:#0b1024;overflow-x:hidden;transition:color .8s ease}
 img{display:block;max-width:100%}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:4px}
 .mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.serif{font-family:var(--serif);font-weight:400}
 
-/* ---------- nav ---------- */
-.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px var(--gutter);transition:background .4s ease, backdrop-filter .4s ease}
-.nav.scrolled{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(14px) saturate(160%)}
-.brand{font-family:var(--display);font-size:1.5rem;text-decoration:none;letter-spacing:-.01em;display:flex;align-items:center;gap:.55rem}
-.brand svg{width:26px;height:26px}
-.nav ul{display:flex;gap:2rem;list-style:none}
-.nav ul a{text-decoration:none;font-weight:600;font-size:.92rem;position:relative}
-.nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease-out)}
-.nav ul a:hover::after{transform:scaleX(1);transform-origin:left}
-.btn{display:inline-flex;align-items:center;gap:.6rem;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:.85rem 1.4rem;font:600 .92rem var(--body);text-decoration:none;cursor:pointer;transition:transform .16s ease-out, background .3s}
-.btn:active{transform:scale(.97)}
-.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
-.btn .arr{transition:transform .3s var(--ease-out)}
-@media (hover:hover){.btn:hover .arr{transform:translateX(4px)}}
-.menu-toggle{display:none}
+/* ---------- capas fijas: cielo, estrellas, astro, grano ---------- */
+.sky{position:fixed;inset:0;z-index:-3;background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bot) 100%)}
+#stars{position:fixed;inset:0;z-index:-2;opacity:0;pointer-events:none}
+.orb{position:fixed;left:0;top:0;z-index:-1;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;pointer-events:none;will-change:transform}
+.orb .glow{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 70px 24px var(--glow,rgba(255,180,90,.45)),0 0 220px 90px var(--glow,rgba(255,170,90,.2));opacity:.9}
+.orb .disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:radial-gradient(circle,#fffaf0 0%,var(--orb,#ffd9a0) 62%)}
+.orb .cut{position:absolute;inset:-2px;border-radius:50%;background:var(--sky-top);transform:translate(120%,-12%);transition:transform 1.4s var(--ease)}
+html[data-night="1"] .orb .cut{transform:translate(32%,-16%)}
+html[data-night="1"] .orb .glow{opacity:.35}
+.grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-2%)}60%{transform:translate(-2%,-4%)}80%{transform:translate(4%,2%)}}
 
-/* ---------- hero ---------- */
-.hero{min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:1fr auto;column-gap:clamp(24px,5vw,80px);row-gap:12px;align-items:center;padding:96px var(--gutter) 24px;position:relative}
-.greet{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.7rem}
-.greet .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 25%,transparent)}
-h1{font-family:var(--display);font-weight:400;font-size:clamp(3.2rem,9.2vw,8.6rem);line-height:.9;letter-spacing:-.035em;margin:1.4rem 0 1.6rem}
-h1 .swap{display:block;position:relative;height:1.8em;overflow:hidden}
-h1 .swap span{position:absolute;left:0;top:0;white-space:nowrap;transition:transform .8s var(--ease-io), opacity .6s ease}
-h1 .swap span em{font-style:italic;color:var(--accent)}
-.lede{max-width:34ch;color:var(--muted);font-size:1.08rem}
-.hero-cta{display:flex;gap:.8rem;margin-top:2rem;flex-wrap:wrap}
+/* ---------- HUD ---------- */
+.hud{position:fixed;z-index:60;pointer-events:none;inset:0;padding:22px var(--g)}
+.hud > *{pointer-events:auto}
+.hud .brand,.hud .clock{mix-blend-mode:difference;color:#fff}
+.hud .brand{position:absolute;left:var(--g);top:22px;font-family:var(--serif);font-size:1.6rem;line-height:1;text-decoration:none;letter-spacing:-.01em}
+.hud .brand em{font-style:italic}
+.hud .clock{position:absolute;right:var(--g);top:26px;display:flex;align-items:center;gap:.8rem}
+.hud .clock b{font-family:var(--mono);font-weight:500;font-size:.8rem;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.hud .chapters{position:absolute;left:var(--g);bottom:24px;display:flex;gap:1.4rem;opacity:0;transform:translateY(8px);transition:opacity .6s ease, transform .6s var(--ease);pointer-events:none}
+.hud .chapters.show{opacity:1;transform:none;pointer-events:auto}
+.hud .chapters button{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;gap:.5rem;transition:color .3s}
+.hud .chapters button i{width:6px;height:6px;border-radius:50%;border:1px solid currentColor;transition:background .3s}
+.hud .chapters button.on{color:var(--ink)}
+.hud .chapters button.on i{background:currentColor}
+.hud .cta{position:absolute;right:var(--g);bottom:18px}
+.pill{display:inline-flex;align-items:center;gap:.7rem;height:46px;padding:0 1.3rem;border-radius:999px;background:var(--ink);color:var(--sky-bot);font-weight:500;font-size:.9rem;text-decoration:none;transition:transform .16s ease-out, background .6s, color .6s;overflow:hidden;position:relative}
+.pill:active{transform:scale(.97)}
+.pill span{display:inline-block;transition:transform .45s var(--ease)}
+.pill .arrow{width:18px;height:18px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:.7rem}
+@media (hover:hover){.pill:hover span:first-child{transform:translateX(-2px)} .pill:hover .arrow{transform:rotate(-45deg)}}
+.pill .arrow{transition:transform .45s var(--ease)}
+.pill.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 
-/* arco del día */
-.dial{grid-column:1 / -1;margin-top:0;max-height:24svh;position:relative;user-select:none;touch-action:none}
-.dial svg{width:100%;height:auto;max-height:24svh;overflow:visible;display:block}
-.dial .track{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
-.dial .done{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linecap:round}
-.dial .tick text{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.06em}
-.dial .tick line{stroke:var(--line);stroke-width:1.5}
-.dial .zone{font-family:var(--display);font-size:22px;fill:var(--ink);opacity:.35;transition:opacity .4s}
-.dial .zone.on{opacity:1}
-.sun{cursor:grab}
-.sun:active{cursor:grabbing}
-.sun .halo{fill:var(--accent);opacity:.22}
-.sun .core{fill:var(--accent);transition:fill .4s}
-.sun .moon-cut{fill:var(--bg);transition:transform .6s var(--ease-io)}
-.dial-hint{position:absolute;right:0;top:-6px;color:var(--muted)}
-.dial-hint b{color:var(--ink);font-weight:500}
-
-.window{position:relative;height:min(58svh,600px);width:min(100%,calc(min(58svh,600px) * .82));justify-self:end;border-radius:999px 999px 18px 18px;overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.45);isolation:isolate}
-.window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .9s ease, transform 1.4s var(--ease-out)}
-.window .tag{position:absolute;left:18px;bottom:18px;z-index:2;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);padding:.55rem .9rem;border-radius:999px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
-.window .clock{position:absolute;right:22px;bottom:12px;z-index:2;font-family:var(--display);font-size:3.2rem;color:#fff;text-shadow:0 2px 30px rgba(0,0,0,.4);letter-spacing:-.02em}
+/* ---------- preloader ---------- */
+.loader{position:fixed;inset:0;z-index:100;background:#0b1024;color:#f1ebdd;display:grid;place-items:center}
+.loader .inner{width:min(560px,80vw);text-align:center}
+.loader .time{font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;opacity:.7}
+.loader .horizon{position:relative;height:120px;margin:28px 0 18px;overflow:hidden}
+.loader .horizon .line{position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(241,235,221,.5);transform:scaleX(0)}
+.loader .horizon .sun{position:absolute;left:50%;bottom:-60px;width:120px;height:120px;margin-left:-60px;border-radius:50%;background:#ffcf8a;box-shadow:0 0 80px 20px rgba(255,170,90,.35)}
+.loader .word{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);letter-spacing:-.01em;opacity:0}
+.no-js .loader,.no-gsap .loader{display:none}
 
 /* ---------- secciones ---------- */
-section{padding:clamp(80px,12vw,160px) var(--gutter)}
-.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:1rem}
-h2{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,5.6vw,4.8rem);line-height:.98;letter-spacing:-.03em}
-h2 em{color:var(--accent);font-style:italic}
+main{position:relative}
+section{position:relative;padding:clamp(100px,14vw,200px) var(--g)}
+.chapter-tag{display:flex;align-items:center;gap:1rem;margin-bottom:2.2rem}
+.chapter-tag .rule{flex:1;height:1px;background:var(--line)}
+
+/* héroe */
+.hero{min-height:100svh;padding:96px var(--g) 80px;display:grid;grid-template-rows:auto 1fr auto;gap:2vh}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(4.6rem,min(15vw,24vh),17rem);line-height:.8;letter-spacing:-.045em;position:relative;z-index:2}
+.hero h1 > span{padding:0 .1em .06em 0}
+.hero h1 .l2{display:block;text-align:right;font-style:italic;margin-top:-.02em}
+.hero .window{position:relative;justify-self:center;align-self:center;width:min(1180px,100%);height:clamp(180px,30vh,400px);border-radius:999px;overflow:hidden;clip-path:inset(48% 0 48% 0 round 999px);margin:-3vh 0}
+.hero .window img{width:100%;height:120%;object-fit:cover;transform:translateY(-8%)}
+.hero .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;align-items:end}
+.hero .meta p{max-width:30ch;color:var(--ink-2)}
+.hero .meta .center{text-align:center}
+.hero .meta .right{text-align:right;justify-self:end}
+.scroll-cue{display:inline-flex;flex-direction:column;align-items:center;gap:.6rem}
+.scroll-cue i{width:1px;height:44px;background:var(--line);position:relative;overflow:hidden}
+.scroll-cue i::after{content:"";position:absolute;left:0;top:-50%;width:1px;height:50%;background:var(--ink);animation:cue 2s var(--ease) infinite}
+@keyframes cue{to{top:100%}}
 
 /* manifiesto */
-.manifest{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line);padding-top:0}
-.manifest-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:end;gap:2rem;padding:clamp(80px,10vw,130px) 0 60px;flex-wrap:wrap}
-.manifest-head p{max-width:40ch;color:var(--muted)}
-.moment{padding:2rem 2rem 2.4rem 0;border-right:1px solid var(--line);position:relative}
-.moment + .moment{padding-left:2rem}
-.moment:last-child{border-right:0}
-.moment .hrs{font-family:var(--mono);font-size:.74rem;color:var(--muted);letter-spacing:.06em}
-.moment h3{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:.7rem 0 .6rem;letter-spacing:-.02em}
-.moment p{color:var(--muted);font-size:.98rem;max-width:32ch}
-.moment .ico{width:44px;height:44px;margin-bottom:1.4rem;color:var(--accent)}
+.manifest{min-height:90vh;display:grid;place-items:center}
+.manifest p{font-family:var(--serif);font-size:clamp(2rem,4.6vw,4.4rem);line-height:1.08;letter-spacing:-.02em;max-width:22ch;text-align:center}
+.manifest p .w{opacity:.14;transition:none}
+.manifest p em{font-style:italic;color:var(--accent)}
 
-/* menú */
-.menu{background:var(--bg2);border-radius:28px;margin:0 calc(var(--gutter) * .5);padding:clamp(56px,8vw,110px) calc(var(--gutter) * .5 + clamp(16px,3vw,40px))}
-.menu-top{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:3rem}
-.tabs{position:relative;display:inline-flex;background:var(--bg);border-radius:999px;padding:5px}
-.tabs button{position:relative;z-index:1;border:0;background:none;font:600 .92rem var(--body);color:var(--muted);padding:.7rem 1.3rem;border-radius:999px;cursor:pointer;transition:color .25s ease}
-.tabs button[aria-selected="true"]{color:var(--bg)}
-.tabs .pill{position:absolute;top:5px;bottom:5px;left:0;background:var(--ink);border-radius:999px;transition:transform .45s var(--ease-io), width .45s var(--ease-io)}
-.dishes{list-style:none;border-top:1px solid var(--line)}
-.dish{display:grid;grid-template-columns:3.2rem 1fr auto;gap:1rem 1.6rem;align-items:baseline;padding:1.5rem .2rem;border-bottom:1px solid var(--line);cursor:default;position:relative}
-.dish .n{grid-column:1;grid-row:1;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
-.dish h4{grid-column:2;grid-row:1}
-.dish h4{font-family:var(--display);font-weight:400;font-size:clamp(1.4rem,2.4vw,1.9rem);letter-spacing:-.015em;line-height:1.15;transition:transform .45s var(--ease-out)}
-.dish p{grid-column:2;color:var(--muted);font-size:.95rem;max-width:56ch;margin-top:-.4rem}
-.dish .price{font-family:var(--mono);font-size:.9rem;grid-row:1;grid-column:3;white-space:nowrap}
-.dish .thumb{display:none}
-@media (hover:hover){.dish:hover h4{transform:translateX(10px)}}
-.dishes.swapping .dish{opacity:0;transform:translateY(10px)}
-.dish{transition:opacity .35s ease, transform .45s var(--ease-out)}
-.badge{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:.28rem .5rem;border-radius:4px;margin-left:.6rem;vertical-align:middle}
-.peek{position:fixed;left:0;top:0;width:260px;aspect-ratio:4/5;border-radius:140px 140px 14px 14px;overflow:hidden;pointer-events:none;z-index:40;opacity:0;transform:translate(-50%,-50%) scale(.9);transition:opacity .25s ease;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
-.peek img{width:100%;height:100%;object-fit:cover}
-.menu-note{display:flex;gap:1.2rem;align-items:center;margin-top:2.4rem;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
+/* capítulo */
+.chapter-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:2rem;margin-bottom:clamp(40px,7vw,100px)}
+.chapter-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(4rem,13vw,13rem);line-height:.8;letter-spacing:-.045em}
+.chapter-head h2 em{font-style:italic}
+.chapter-head .hours{text-align:right}
+.chapter-head .hours b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.6rem);line-height:1;letter-spacing:-.02em;font-style:italic}
 
-/* galería / salón */
-.salon{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.6vw,22px);align-items:end}
-.salon .copy{grid-column:1 / span 5;padding-bottom:2rem}
-.salon .copy p{color:var(--muted);margin-top:1.4rem;max-width:38ch}
-.ph{overflow:hidden;border-radius:14px;position:relative}
-.ph img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 1.6s var(--ease-out)}
-.ph.in img{transform:scale(1)}
-.reveal-clip{clip-path:inset(100% 0 0 0);transition:clip-path 1.2s var(--ease-io)}
-.reveal-clip.in{clip-path:inset(0 0 0 0)}
-.p1{grid-column:6 / span 7;aspect-ratio:16/10}
-.p2{grid-column:1 / span 4;aspect-ratio:4/5}
-.p3{grid-column:5 / span 4;aspect-ratio:4/5;margin-bottom:12%}
-.p4{grid-column:9 / span 4;aspect-ratio:4/5}
-.ph figcaption{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.45);color:#fff;backdrop-filter:blur(6px);padding:.3rem .6rem;border-radius:6px;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+/* vitrina con foto fija */
+.showcase{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,90px);align-items:start}
+.frame{position:sticky;top:12vh;height:76vh;border-radius:999px 999px 24px 24px;overflow:hidden;background:rgba(0,0,0,.08)}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);transform:scale(1.12)}
+.frame img.on{clip-path:inset(0 0 0 0);transform:scale(1)}
+.frame img{transition:clip-path 1.1s cubic-bezier(.77,0,.175,1), transform 1.6s var(--ease)}
+.frame .cap{position:absolute;left:18px;bottom:18px;z-index:2;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);color:#1b1a17;padding:.5rem .85rem;border-radius:999px}
+.dishes{list-style:none;padding:10vh 0 20vh}
+.dish{padding:5vh 0;border-top:1px solid var(--line);opacity:.3;transition:opacity .6s ease}
+.dish.on{opacity:1}
+.dish .top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.dish h3{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,4.2vw,4rem);line-height:1;letter-spacing:-.025em}
+.dish h3 em{font-style:italic}
+.dish .price{font-family:var(--mono);font-size:.9rem}
+.dish p{color:var(--ink-2);max-width:42ch;margin-top:1rem}
+.dish .tag{display:inline-block;margin-top:1rem;border:1px solid var(--line);border-radius:999px;padding:.3rem .7rem}
+.dish img.inline{display:none}
 
-/* testimonios */
-.quotes{text-align:center}
-.quote-wrap{position:relative;min-height:13rem;max-width:900px;margin:2rem auto 0}
-.quote{position:absolute;inset:0;opacity:0;transform:translateY(14px);filter:blur(4px);transition:opacity .6s ease, transform .8s var(--ease-out), filter .6s ease}
-.quote.on{opacity:1;transform:none;filter:none}
-.quote blockquote{font-family:var(--display);font-size:clamp(1.6rem,3.4vw,2.6rem);line-height:1.2;letter-spacing:-.02em}
-.quote cite{display:block;margin-top:1.4rem;font-style:normal;color:var(--muted);font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
-.dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.6rem}
-.dots button{width:34px;height:4px;border:0;border-radius:4px;background:var(--line);cursor:pointer;position:relative;overflow:hidden;padding:0}
-.dots button i{position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left}
-.dots button.on i{animation:fill 6s linear forwards}
-@keyframes fill{to{transform:scaleX(1)}}
+/* café horizontal */
+.coffee{padding-left:0;padding-right:0;overflow:hidden}
+.coffee .track{display:flex;gap:clamp(16px,2vw,32px);padding:0 var(--g);width:max-content;align-items:center}
+.coffee .intro{width:min(520px,80vw);flex:none;padding-right:4vw}
+.coffee .intro h2{font-family:var(--serif);font-weight:400;font-size:clamp(3rem,7vw,6.5rem);line-height:.9;letter-spacing:-.035em}
+.coffee .intro h2 em{font-style:italic}
+.coffee .intro p{color:var(--ink-2);margin-top:1.4rem;max-width:36ch}
+.coffee figure{flex:none;width:clamp(260px,32vw,460px);height:clamp(340px,64vh,640px);border-radius:24px;overflow:hidden;position:relative}
+.coffee figure:nth-of-type(2){height:clamp(300px,50vh,520px);border-radius:999px 999px 24px 24px}
+.coffee figure img{width:120%;height:100%;object-fit:cover;max-width:none;margin-left:-10%}
+.coffee figcaption{position:absolute;left:16px;bottom:16px;right:16px;color:#fff;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.coffee .quote{flex:none;width:min(560px,80vw);font-family:var(--serif);font-size:clamp(2rem,3.6vw,3.4rem);line-height:1.05;letter-spacing:-.02em;padding:0 4vw}
+.coffee .quote em{font-style:italic;color:var(--accent)}
 
-/* reserva + mapa */
-.visit{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,60px)}
-.card{background:var(--bg2);border-radius:24px;padding:clamp(24px,3.4vw,44px)}
-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
-label{display:flex;flex-direction:column;gap:.4rem;font-size:.8rem;font-weight:600;color:var(--muted)}
-label.full{grid-column:1/-1}
-input,select{font:500 1rem var(--body);color:var(--ink);background:var(--bg);border:1.5px solid transparent;border-radius:12px;padding:.85rem 1rem;transition:border-color .2s;width:100%}
-input:focus,select:focus{outline:none;border-color:var(--accent)}
-.stepper{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:.35rem}
-.stepper button{width:40px;height:40px;border-radius:9px;border:0;background:var(--bg2);color:var(--ink);font-size:1.2rem;cursor:pointer;transition:transform .12s ease-out}
-.stepper button:active{transform:scale(.92)}
-.stepper output{font-family:var(--display);font-size:1.5rem;min-width:2ch;text-align:center;display:inline-block}
-.stepper output.bump{animation:bump .3s var(--ease-out)}
-@keyframes bump{from{transform:translateY(-8px);opacity:.2}}
-form .btn{grid-column:1/-1;justify-content:center;padding:1rem}
-.form-ok{grid-column:1/-1;font-size:.92rem;color:var(--ink);min-height:1.4em}
-.map{border-radius:24px;overflow:hidden;position:relative;min-height:420px;display:flex;flex-direction:column;background:var(--bg2)}
-.map iframe{flex:1;border:0;width:100%;min-height:340px;transition:filter .6s ease}
-body.is-night .map iframe{filter:invert(.9) hue-rotate(180deg) saturate(.7) brightness(.95)}
-.map-info{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.4rem 1.6rem}
-.map-info b{display:block;font-family:var(--display);font-weight:400;font-size:1.15rem;margin-top:.2rem}
-.map-info span{color:var(--muted);font-size:.85rem}
+/* almuerzo */
+.lunch{display:grid;grid-template-columns:5fr 7fr;gap:clamp(24px,5vw,80px);align-items:start}
+.ticket{position:sticky;top:14vh;background:#fbf8f1;color:#1b1a17;padding:36px 34px 40px;border-radius:6px;box-shadow:0 30px 60px -30px rgba(0,0,0,.4);transform:rotate(-2deg);
+  -webkit-mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/22px 51% repeat-x, radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) 0 100%/22px 51% repeat-x;
+          mask:radial-gradient(circle 8px at 50% 0,transparent 98%,#000) 0 0/22px 51% repeat-x, radial-gradient(circle 8px at 50% 100%,transparent 98%,#000) 0 100%/22px 51% repeat-x}
+.ticket .t-head{text-align:center;border-bottom:1px dashed rgba(0,0,0,.25);padding-bottom:18px;margin-bottom:18px}
+.ticket .t-head b{display:block;font-family:var(--serif);font-weight:400;font-size:2.6rem;line-height:1;letter-spacing:-.02em}
+.ticket .t-head span{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;opacity:.6}
+.ticket dl{display:grid;gap:14px}
+.ticket dt{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+.ticket dd{font-family:var(--serif);font-size:1.45rem;line-height:1.15}
+.ticket .t-foot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed rgba(0,0,0,.25);margin-top:20px;padding-top:18px}
+.ticket .t-foot b{font-family:var(--serif);font-weight:400;font-size:2.4rem}
+.ticket .stamp{position:absolute;right:22px;top:88px;width:88px;height:88px;border:2px solid #c9432a;color:#c9432a;border-radius:50%;display:grid;place-items:center;text-align:center;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;line-height:1.3;transform:rotate(14deg);opacity:.85}
+.mosaic{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.6vw,22px)}
+.mosaic figure{border-radius:18px;overflow:hidden;position:relative}
+.mosaic figure img{width:100%;height:118%;object-fit:cover}
+.mosaic .m1{aspect-ratio:4/5;margin-top:12vh}
+.mosaic .m2{aspect-ratio:4/5}
+.mosaic .m3{aspect-ratio:1;grid-column:1/-1;border-radius:999px 999px 18px 18px;aspect-ratio:16/10}
+.mosaic figcaption{position:absolute;left:14px;bottom:12px;color:#fff;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.carta{margin-top:clamp(60px,8vw,120px);display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,5vw,80px)}
+.carta .row{display:flex;align-items:baseline;gap:.8rem;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+.carta .row b{font-family:var(--serif);font-weight:400;font-size:1.5rem;letter-spacing:-.01em}
+.carta .row i{flex:1;border-bottom:1px dotted var(--ink-2);opacity:.5;transform:translateY(-.3em)}
+.carta .row span{font-family:var(--mono);font-size:.85rem}
 
-/* footer */
-footer{padding:80px var(--gutter) 36px;border-top:1px solid var(--line);margin-top:40px}
-.foot-big{font-family:var(--display);font-size:clamp(3.5rem,14vw,13rem);line-height:.85;letter-spacing:-.05em;white-space:nowrap}
-.foot-big em{color:var(--accent)}
-.foot-row{display:flex;justify-content:space-between;align-items:center;gap:1.4rem;flex-wrap:wrap;margin-top:3rem;color:var(--muted);font-size:.9rem}
-.foot-row a{text-decoration:none;font-weight:600;color:var(--ink)}
-.credit a{background:linear-gradient(var(--accent),var(--accent)) 0 100%/0 2px no-repeat;transition:background-size .4s var(--ease-out)}
-.credit a:hover{background-size:100% 2px}
-.socials{display:flex;gap:1.2rem}
+/* tarde: imagen que se abre */
+.afternoon{padding:0;height:100vh}
+.afternoon .pin{position:relative;height:100vh;display:grid;place-items:center;overflow:hidden}
+.afternoon .img{position:absolute;inset:0;clip-path:inset(24% 32% 24% 32% round 300px)}
+.afternoon .img img{width:100%;height:100%;object-fit:cover;transform:scale(1.3)}
+.afternoon .txt{position:relative;z-index:2;text-align:center;color:#fff;padding:0 var(--g);text-shadow:0 2px 30px rgba(0,0,0,.35)}
+.afternoon .txt h2{font-family:var(--serif);font-weight:400;font-size:clamp(3rem,8vw,8rem);line-height:.9;letter-spacing:-.035em}
+.afternoon .txt h2 em{font-style:italic}
+.afternoon .txt p{margin-top:1.2rem;font-size:1.05rem;opacity:.9}
 
-/* reveal */
-.rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease, transform 1s var(--ease-out)}
-.rv.in{opacity:1;transform:none}
+/* cena */
+.night-list{list-style:none;border-top:1px solid var(--line);margin-top:2rem}
+.night-list li{display:grid;grid-template-columns:5rem 1fr auto;gap:1.4rem;align-items:baseline;padding:2.2rem 0;border-bottom:1px solid var(--line);position:relative;cursor:default}
+.night-list .n{font-family:var(--mono);font-size:.72rem;color:var(--ink-2)}
+.night-list h3{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.8vw,4.6rem);line-height:.95;letter-spacing:-.03em;transition:transform .6s var(--ease), font-style .3s}
+.night-list p{grid-column:2;color:var(--ink-2);max-width:48ch;margin-top:-.4rem}
+.night-list .price{font-family:var(--mono);font-size:.9rem;grid-row:1;grid-column:3}
+@media (hover:hover){.night-list li:hover h3{transform:translateX(18px);font-style:italic}}
+.peek{position:fixed;left:0;top:0;z-index:40;width:300px;height:380px;pointer-events:none;border-radius:999px 999px 20px 20px;overflow:hidden;opacity:0;transform:scale(.8)}
+.peek img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bar-hero{position:relative;height:80vh;border-radius:28px;overflow:hidden;margin-top:clamp(60px,8vw,120px)}
+.bar-hero img{width:100%;height:125%;object-fit:cover}
+.bar-hero .over{position:absolute;inset:auto 0 0 0;padding:clamp(20px,4vw,48px);display:flex;justify-content:space-between;align-items:end;gap:2rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.6))}
+.bar-hero h3{font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,6vw,5.6rem);line-height:.9;letter-spacing:-.03em}
+.bar-hero h3 em{font-style:italic;color:#f2b35c}
+.bar-hero p{max-width:34ch;opacity:.85}
+.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,22px);margin-top:clamp(12px,1.6vw,22px)}
+.drink{border-radius:22px;overflow:hidden;position:relative;aspect-ratio:3/4}
+.drink img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+@media (hover:hover){.drink:hover img{transform:scale(1.06)}}
+.drink .info{position:absolute;inset:auto 0 0 0;padding:18px 20px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.drink b{font-family:var(--serif);font-weight:400;font-size:1.8rem;display:block;line-height:1}
+.drink span{font-size:.88rem;opacity:.8}
 
-/* responsive */
+/* reserva */
+.book{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:stretch}
+.book h2{font-family:var(--serif);font-weight:400;font-size:clamp(3.4rem,8vw,7.4rem);line-height:.86;letter-spacing:-.04em}
+.book h2 em{font-style:italic;color:var(--accent)}
+.form{margin-top:2.6rem;display:grid;gap:0}
+.field{display:grid;grid-template-columns:8rem 1fr;align-items:center;border-bottom:1px solid var(--line);min-height:64px}
+.field label{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.field input,.field select{font:400 1.5rem var(--serif);color:var(--ink);background:transparent;border:0;padding:.7rem 0;width:100%;outline:none;-webkit-appearance:none;appearance:none}
+.field select option{color:#111}
+.seg{display:flex;gap:.4rem;flex-wrap:wrap;padding:.6rem 0}
+.seg button{border:1px solid var(--line);border-radius:999px;padding:.45rem .95rem;font-size:.9rem;transition:background .25s, color .25s, transform .12s ease-out}
+.seg button:active{transform:scale(.96)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sky-bot);border-color:var(--ink)}
+.form .pill{margin-top:2rem;justify-self:start}
+.form-msg{margin-top:1rem;min-height:1.4em;color:var(--ink-2);font-size:.92rem}
+.map{position:relative;border-radius:28px;overflow:hidden;min-height:540px;background:var(--paper)}
+.map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;transition:filter 1s ease}
+html[data-night="1"] .map iframe{filter:invert(.92) hue-rotate(180deg) saturate(.6) brightness(.9)}
+.map .info{position:absolute;left:14px;right:14px;bottom:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:18px 20px;border-radius:18px;background:var(--paper);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%)}
+.map .info span{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.map .info b{font-family:var(--serif);font-weight:400;font-size:1.2rem;line-height:1.15}
+
+/* pie */
+footer{padding:clamp(100px,14vw,200px) var(--g) 110px;text-align:center}
+footer .bye{font-family:var(--serif);font-weight:400;font-size:clamp(4.4rem,16vw,17rem);line-height:.8;letter-spacing:-.05em}
+footer .bye em{font-style:italic}
+footer .row{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;margin-top:4rem;color:var(--ink-2);font-size:.9rem;text-align:left}
+footer .row a{text-decoration:none;color:var(--ink)}
+footer .credit a{background:linear-gradient(var(--accent),var(--accent)) 0 100%/100% 1px no-repeat;padding-bottom:2px;transition:background-size .5s var(--ease)}
+footer .credit a:hover{background-size:0 1px;background-position:100% 100%}
+footer .soc{display:flex;gap:1.4rem}
+
+/* estado sin animaciones */
+.no-gsap .frame img:first-child{clip-path:none;transform:none}
+.no-gsap .dish{opacity:1}
+.no-gsap .manifest p .w{opacity:1}
+.no-gsap .hero .window{clip-path:none}
+.no-gsap .afternoon .img{clip-path:none}
+
 @media (max-width:900px){
-  .nav ul{display:none}
-  .hero{grid-template-columns:1fr;padding-top:100px}
-  .window{max-width:440px;width:100%;height:auto;justify-self:center;aspect-ratio:1/1;order:-1}
-  .hero{grid-template-rows:auto}
-  .manifest{grid-template-columns:1fr}
-  .moment,.moment + .moment{border-right:0;border-bottom:1px solid var(--line);padding:2rem 0}
-  .salon .copy,.p1,.p2,.p3,.p4{grid-column:1/-1}
-  .p2,.p3,.p4{aspect-ratio:16/11;margin:0}
-  .visit{grid-template-columns:1fr}
-  .dish{grid-template-columns:1fr auto}
-  .dish .n{display:none}
-  .dish h4{grid-column:1}
-  .dish .price{grid-column:2}
-  .dish p{grid-column:1 / -1;margin-top:0}
-  .dish .thumb{display:block;grid-column:1/-1;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-top:.4rem}
+  .hud .chapters{display:none}
+  .hero .meta{grid-template-columns:1fr;gap:1rem}
+  .hero .meta .center{display:none}
+  .hero .meta .right{text-align:left;justify-self:start}
+  .chapter-head{grid-template-columns:1fr}
+  .chapter-head .hours{text-align:left}
+  .showcase{grid-template-columns:1fr}
+  .frame{display:none}
+  .dishes{padding:0}
+  .dish{opacity:1}
+  .dish img.inline{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:18px;margin-top:1.2rem}
+  .coffee .track{flex-direction:column;align-items:stretch;width:auto}
+  .coffee figure,.coffee figure:nth-of-type(2){width:100%;height:60vh}
+  .coffee .quote{width:auto;padding:0}
+  .lunch{grid-template-columns:1fr}
+  .ticket{position:relative;top:0}
+  .carta{grid-template-columns:1fr}
+  .night-list li{grid-template-columns:1fr auto}
+  .night-list .n{display:none}
+  .night-list h3{grid-column:1}
+  .night-list .price{grid-column:2}
+  .night-list p{grid-column:1/-1}
+  .drinks{grid-template-columns:1fr}
+  .book{grid-template-columns:1fr}
+  .map .info{grid-template-columns:1fr}
   .peek{display:none}
-  .dial-hint{position:static;margin-bottom:8px;display:block}
-  .dial .zone{font-size:48px}
-  .dial .tick text{display:none}
-  .dial .track{stroke-width:4;stroke-dasharray:4 14}
-  .dial .done{stroke-width:7}
-  #sunInner{transform:scale(2.1)}
-  .dial svg{max-height:none;margin-top:6px}
-  .dial{max-height:none}
-  .map-info{grid-template-columns:1fr}
-  .menu-top .tabs{width:100%}
-  .tabs button{flex:1;padding:.7rem .6rem}
-}
-@media (max-width:520px){
-  form{grid-template-columns:1fr}
-  .window .clock{font-size:2.4rem}
 }
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}
-  .rv,.reveal-clip{transform:none;clip-path:none}
+  .grain{animation:none}
+  .scroll-cue i::after{animation:none}
 }
 </style>
 </head>
 <body>
+<script>document.documentElement.classList.add('js')</script>
 
-<nav class="nav" id="nav">
-  <a class="brand" href="#top" aria-label="Tres Tiempos, inicio">
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22a13 13 0 0 1 26 0"/><circle cx="16" cy="22" r="4" fill="currentColor"/><path d="M1 27h30"/></svg>
-    Tres Tiempos
-  </a>
-  <ul>
-    <li><a href="#momentos">Momentos</a></li>
-    <li><a href="#carta">Carta</a></li>
-    <li><a href="#salon">El salón</a></li>
-    <li><a href="#visita">Visítanos</a></li>
-  </ul>
-  <a class="btn" href="#visita">Reservar mesa <span class="arr">→</span></a>
-</nav>
+<div class="sky" aria-hidden="true"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="orb" id="orb" aria-hidden="true"><span class="glow"></span><span class="disc"><span class="cut"></span></span></div>
+<div class="grain" aria-hidden="true"></div>
 
-<header class="hero" id="top">
-  <div>
-    <span class="greet"><span class="dot"></span><span id="liveTime">Yarumal · --:--</span></span>
-    <h1>
-      <span class="swap" id="swap">
-        <span data-p="0">Buenos<br><em>días.</em></span>
-        <span data-p="1">Buen<br><em>provecho.</em></span>
-        <span data-p="2">Buenas<br><em>noches.</em></span>
-      </span>
-    </h1>
-    <p class="lede" id="lede">Desayuno, almuerzo y cena frente al parque principal de Yarumal. La carta cambia con la luz del día.</p>
-    <div class="hero-cta">
-      <a class="btn" href="#carta">Ver la carta de ahora <span class="arr">→</span></a>
-      <a class="btn ghost" href="https://wa.me/573105550142" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="inner">
+    <div class="time" id="loadTime">05:00</div>
+    <div class="horizon"><span class="line"></span><span class="sun"></span></div>
+    <div class="word">Buenos días, Yarumal.</div>
+  </div>
+</div>
+
+<div class="hud">
+  <a class="brand" href="#top" data-scroll>Tres <em>Tiempos</em></a>
+  <div class="clock"><span class="mono" style="opacity:.6">Yarumal</span><b id="clock">06:00</b></div>
+  <nav class="chapters" aria-label="Capítulos">
+    <button data-go="#desayuno"><i></i>Desayuno</button>
+    <button data-go="#almuerzo"><i></i>Almuerzo</button>
+    <button data-go="#cena"><i></i>Cena</button>
+  </nav>
+  <a class="pill cta" href="#reservar" data-scroll><span>Reservar mesa</span><span class="arrow">→</span></a>
+</div>
+
+<main>
+  <header class="hero" id="top" data-h="5.8">
+    <h1 aria-label="Tres Tiempos"><span class="l1 split">Tres</span><span class="l2 split">Tiempos</span></h1>
+    <div class="window" id="heroWin"><img src="img/amanecer.jpg" alt="Amanecer sobre las montañas del norte de Antioquia"></div>
+    <div class="meta">
+      <p class="fade">Restaurante de día entero frente al parque principal de Yarumal, a 2.265 metros sobre el mar.</p>
+      <div class="center fade"><span class="scroll-cue"><span class="mono">Desliza y deja pasar el día</span><i></i></span></div>
+      <p class="right fade">Desayuno <span style="opacity:.4">/</span> Almuerzo <span style="opacity:.4">/</span> Cena<br><span class="mono" style="opacity:.7">Mar a dom · 6:30 — 22:30</span></p>
     </div>
-  </div>
+  </header>
 
-  <figure class="window" aria-hidden="true">
-    <img src="img/hero-desayuno.jpg" alt="" data-w="0">
-    <img src="img/hero-almuerzo.jpg" alt="" data-w="1" style="opacity:0">
-    <img src="img/hero-cena.jpg" alt="" data-w="2" style="opacity:0">
-    <span class="clock" id="bigClock">7:00</span>
-    <span class="tag" id="winTag">Servimos desayuno</span>
-  </figure>
+  <section class="manifest" data-h="6.4">
+    <p id="manifest">Abrimos cuando la niebla todavía cubre el parque y cerramos cuando ya se ven las estrellas. Una sola cocina, <em>tres tiempos</em>, y el mismo cuidado de la primera arepa a la última copa.</p>
+  </section>
 
-  <div class="dial" id="dial">
-    <span class="dial-hint mono">Arrastra el sol · <b id="dialHour">7:00</b></span>
-    <svg viewBox="0 0 1200 190" role="slider" aria-label="Hora del día" aria-valuemin="6" aria-valuemax="23" aria-valuenow="7" tabindex="0" id="dialSvg">
-      <path id="arc" class="track" d="M40 170 C 300 -30, 900 -30, 1160 170"/>
-      <path id="arcDone" class="done" d="M40 170 C 300 -30, 900 -30, 1160 170"/>
-      <g id="ticks"></g>
-      <text class="zone" x="170" y="186" text-anchor="middle" data-z="0">Mañana</text>
-      <text class="zone" x="600" y="186" text-anchor="middle" data-z="1">Mediodía</text>
-      <text class="zone" x="1030" y="186" text-anchor="middle" data-z="2">Noche</text>
-      <g class="sun" id="sun">
-        <g id="sunInner">
-          <circle class="halo" r="26"/>
-          <circle class="core" r="13"/>
-          <circle class="moon-cut" r="11" id="moonCut" transform="translate(28,-6)"/>
-        </g>
-      </g>
-    </svg>
-  </div>
-</header>
-
-<section id="momentos" style="padding-top:0;padding-bottom:0">
-  <div class="manifest">
-    <div class="manifest-head rv">
-      <h2>Una cocina,<br><em>tres</em> momentos.</h2>
-      <p>Abrimos con el primer tinto de la mañana y cerramos con la última copa. Cada franja tiene su propia carta, su propia luz y su propio ritmo.</p>
+  <!-- PRIMER TIEMPO -->
+  <section id="desayuno" data-h="7" data-chapter="0">
+    <div class="chapter-tag"><span class="mono">Primer tiempo</span><span class="rule"></span><span class="mono">06:30 — 11:00</span></div>
+    <div class="chapter-head">
+      <h2 class="split-lines">El <em>desayuno</em></h2>
+      <div class="hours"><span class="mono" style="color:var(--ink-2)">Se sirve con</span><b>tinto de greca</b></div>
     </div>
-    <article class="moment rv">
-      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 30a16 16 0 0 1 32 0"/><path d="M22 6v5M8 14l3.5 3.5M36 14l-3.5 3.5M2 36h40"/></svg>
-      <span class="hrs">6:30 — 11:00</span>
-      <h3>Desayuno</h3>
-      <p>Calentado paisa, arepa de chócolo recién asada, chocolate con queso y café de fincas del norte antioqueño.</p>
-    </article>
-    <article class="moment rv">
-      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><circle cx="22" cy="22" r="8"/><path d="M22 3v5M22 36v5M3 22h5M36 22h5M8.5 8.5l3.5 3.5M32 32l3.5 3.5M8.5 35.5 12 32M32 12l3.5-3.5"/></svg>
-      <span class="hrs">12:00 — 15:30</span>
-      <h3>Almuerzo</h3>
-      <p>Menú del día con sopa, principio y jugo natural. Platos de la casa para quien tiene tiempo de quedarse.</p>
-    </article>
-    <article class="moment rv">
-      <svg class="ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 30A13 13 0 0 1 17 9a13 13 0 1 0 17 17 13 13 0 0 1-4 4Z"/><path d="M34 6v4M32 8h4"/></svg>
-      <span class="hrs">18:00 — 22:30</span>
-      <h3>Cena</h3>
-      <p>Carnes a la brasa, trucha de la región y coctelería con lulo, panela y aguardiente. Luz baja, mesas largas.</p>
-    </article>
-  </div>
-</section>
-
-<section id="carta" style="padding-left:0;padding-right:0">
-  <div class="menu">
-    <div class="menu-top">
-      <div class="rv">
-        <span class="eyebrow">La carta</span>
-        <h2 id="menuTitle">Para empezar<br><em>el día.</em></h2>
+    <div class="showcase">
+      <div class="frame" id="frameD">
+        <img src="img/d-calentado.jpg" alt="Calentado paisa con huevo frito y arepa" class="on">
+        <img src="img/d-arepas.jpg" alt="Arepas asándose en la plancha">
+        <img src="img/d-huevos.jpg" alt="Huevos fritos con maduro y aguacate">
+        <img src="img/d-sarten.jpg" alt="Huevos en sartén de hierro con pan y jugo">
+        <img src="img/d-cafe.jpg" alt="Taza de café colombiano junto a una greca">
+        <span class="cap mono" id="capD">Calentado paisa</span>
       </div>
-      <div class="tabs" role="tablist" aria-label="Carta por momento">
-        <span class="pill" id="pill"></span>
-        <button role="tab" aria-selected="true" data-t="0">Desayuno</button>
-        <button role="tab" aria-selected="false" data-t="1">Almuerzo</button>
-        <button role="tab" aria-selected="false" data-t="2">Cena</button>
+      <ol class="dishes" data-frame="frameD" data-cap="capD">
+        <li class="dish on"><div class="top"><h3>Calentado <em>paisa</em></h3><span class="price">$18.900</span></div><p>Frijol, arroz y carne desmechada de la víspera, huevo frito de gallina campesina, hogao y arepa de chócolo.</p><span class="tag mono">El favorito de la casa</span><img class="inline" src="img/d-calentado.jpg" alt="" loading="lazy"></li>
+        <li class="dish"><div class="top"><h3>Arepas de <em>callana</em></h3><span class="price">$9.500</span></div><p>Maíz pelado molido cada madrugada, asadas en plancha y servidas con quesito, mantequilla y hogao.</p><img class="inline" src="img/d-arepas.jpg" alt="" loading="lazy"></li>
+        <li class="dish"><div class="top"><h3>Huevos con <em>maduro</em></h3><span class="price">$16.500</span></div><p>Huevos al gusto, tajadas de maduro caramelizadas, aguacate con sal de mar y tostada de masa madre.</p><img class="inline" src="img/d-huevos.jpg" alt="" loading="lazy"></li>
+        <li class="dish"><div class="top"><h3>Sartén de <em>hierro</em></h3><span class="price">$21.000</span></div><p>Para compartir: huevos pericos, chorizo de Santa Rosa, papa criolla, pan del horno y jugo de naranja.</p><img class="inline" src="img/d-sarten.jpg" alt="" loading="lazy"></li>
+        <li class="dish"><div class="top"><h3>Chocolate <em>con queso</em></h3><span class="price">$9.800</span></div><p>Chocolate de mesa batido con molinillo, queso campesino para derretir y almojábana tibia. O tinto, si prefiere.</p><img class="inline" src="img/d-cafe.jpg" alt="" loading="lazy"></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- café: recorrido horizontal -->
+  <section class="coffee" id="cafe" data-h="10">
+    <div class="track" id="coffeeTrack">
+      <div class="intro">
+        <span class="mono" style="color:var(--ink-2)">Media mañana · 10:00</span>
+        <h2 style="margin-top:1rem">Café del <em>norte</em> antioqueño</h2>
+        <p>Compramos el grano a fincas de Yarumal, Angostura y Campamento. Lo tostamos cada semana y lo servimos en greca, en prensa o filtrado a mano.</p>
       </div>
+      <figure><img src="img/cafe-planta.jpg" alt="Rama de café con granos maduros" loading="lazy"><figcaption>Cosecha · Campamento, 1.900 m</figcaption></figure>
+      <figure><img src="img/cafe-grano.jpg" alt="Café tostado en grano con una taza" loading="lazy"><figcaption>Tostión media, cada lunes</figcaption></figure>
+      <div class="quote">“El tinto se sirve como en la finca: <em>en greca</em>, bien caliente y sin afán.”</div>
+      <figure><img src="img/cafe-taza.jpg" alt="Taza de café con un pan pequeño" loading="lazy"><figcaption>Con almojábana, siempre</figcaption></figure>
     </div>
-    <ul class="dishes" id="dishes" role="tabpanel"></ul>
-    <div class="menu-note">
-      <span class="mono">Precios en pesos colombianos · IVA incluido</span>
-      <span>¿Alergias o restricciones? Díselo a tu mesero y adaptamos el plato.</span>
+  </section>
+
+  <!-- SEGUNDO TIEMPO -->
+  <section id="almuerzo" data-h="12" data-chapter="1">
+    <div class="chapter-tag"><span class="mono">Segundo tiempo</span><span class="rule"></span><span class="mono">12:00 — 15:30</span></div>
+    <div class="chapter-head">
+      <h2 class="split-lines">El <em>almuerzo</em></h2>
+      <div class="hours"><span class="mono" style="color:var(--ink-2)">Todos los días</span><b>menú del día</b></div>
     </div>
-  </div>
-</section>
-
-<div class="peek" id="peek" aria-hidden="true"><img alt="" id="peekImg"></div>
-
-<section id="salon">
-  <div class="salon">
-    <div class="copy rv">
-      <span class="eyebrow">El salón</span>
-      <h2>Frente al parque,<br>a <em>2.265</em> metros.</h2>
-      <p>Yarumal es fría, y por eso aquí la cocina siempre está encendida. Madera, luz cálida y ventanales que miran a la plaza: se viene por el desayuno y uno termina quedándose a almorzar.</p>
-    </div>
-    <figure class="ph reveal-clip p1"><img src="img/salon.jpg" alt="Salón del restaurante con mesas de madera y luz cálida" loading="lazy"><figcaption>Salón principal · 60 puestos</figcaption></figure>
-    <figure class="ph reveal-clip p2"><img src="img/d3.jpg" alt="Dos tazas de café con arte latte" loading="lazy"><figcaption>Café del norte antioqueño</figcaption></figure>
-    <figure class="ph reveal-clip p3"><img src="img/a4.jpg" alt="Mesa servida con varios platos para compartir" loading="lazy"><figcaption>Almuerzos para compartir</figcaption></figure>
-    <figure class="ph reveal-clip p4"><img src="img/c4.jpg" alt="Barra del bar con luces cálidas por la noche" loading="lazy"><figcaption>La barra, de noche</figcaption></figure>
-  </div>
-</section>
-
-<section class="quotes">
-  <span class="eyebrow rv">Lo que dicen en la mesa</span>
-  <div class="quote-wrap" id="quotes">
-    <div class="quote on"><blockquote>“Vine por un calentado a las ocho y me fui a las tres después del almuerzo. No me arrepiento de nada.”</blockquote><cite>Mariana R. · Medellín</cite></div>
-    <div class="quote"><blockquote>“La trucha al ajillo es la mejor que he probado en el norte. Y el cóctel de lulo con aguardiente, peligroso.”</blockquote><cite>Andrés F. · Yarumal</cite></div>
-    <div class="quote"><blockquote>“El menú del día sabe a casa, pero servido con cariño de restaurante. Vamos cada semana con la oficina.”</blockquote><cite>Luisa G. · Santa Rosa de Osos</cite></div>
-  </div>
-  <div class="dots" id="qdots"><button aria-label="Opinión 1" class="on"><i></i></button><button aria-label="Opinión 2"><i></i></button><button aria-label="Opinión 3"><i></i></button></div>
-</section>
-
-<section id="visita">
-  <div class="visit">
-    <div class="card rv">
-      <span class="eyebrow">Reservas</span>
-      <h2>Guarda tu <em>mesa.</em></h2>
-      <form id="form" novalidate>
-        <label class="full">Nombre<input name="n" required placeholder="¿A nombre de quién?" autocomplete="name"></label>
-        <label>Fecha<input type="date" name="d" required id="date"></label>
-        <label>Momento
-          <select name="m" id="momentSel">
-            <option value="Desayuno">Desayuno</option>
-            <option value="Almuerzo">Almuerzo</option>
-            <option value="Cena">Cena</option>
-          </select>
-        </label>
-        <label class="full">Personas
-          <div class="stepper"><button type="button" data-s="-1" aria-label="Menos personas">−</button><output id="pax">2</output><button type="button" data-s="1" aria-label="Más personas">+</button></div>
-        </label>
-        <button class="btn" type="submit">Confirmar por WhatsApp <span class="arr">→</span></button>
-        <p class="form-ok" id="formOk" role="status"></p>
-      </form>
-    </div>
-    <div class="map rv">
-      <iframe title="Mapa de Tres Tiempos en Yarumal, Antioquia" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Parque%20Principal%20Yarumal%2C%20Antioquia&z=16&output=embed"></iframe>
-      <div class="map-info">
-        <div><span>Dirección</span><b>Cl. 20 #19-35, Parque Principal</b></div>
-        <div><span>Horario</span><b>Mar a dom · 6:30–22:30</b></div>
-        <div><span>Teléfono</span><b><a href="tel:+573105550142" style="text-decoration:none">310 555 0142</a></b></div>
+    <div class="lunch">
+      <article class="ticket" aria-label="Menú del día">
+        <div class="t-head"><span id="tDay">Miércoles</span><b>Menú del día</b><span>Sopa · seco · jugo · postre</span></div>
+        <div class="stamp">HECHO<br>HOY</div>
+        <dl id="tBody"></dl>
+        <div class="t-foot"><span class="mono">Todo incluido</span><b>$22.000</b></div>
+      </article>
+      <div>
+        <div class="mosaic">
+          <figure class="m1"><img src="img/a-bandeja.jpg" alt="Plato de arroz, frijoles y maduro" loading="lazy" data-speed="-8"><figcaption>Frijoles, arroz y maduro</figcaption></figure>
+          <figure class="m2"><img src="img/a-sopa.jpg" alt="Sopa de la casa con mazorca y papa" loading="lazy" data-speed="8"><figcaption>La sopa del día</figcaption></figure>
+          <figure class="m3"><img src="img/a-plato.jpg" alt="Plato fuerte con carnes, papas y ensalada" loading="lazy" data-speed="-6"><figcaption>Plato de la casa</figcaption></figure>
+        </div>
+        <div class="carta">
+          <div class="row"><b>Bandeja de la casa</b><i></i><span>$32.000</span></div>
+          <div class="row"><b>Sobrebarriga criolla</b><i></i><span>$29.500</span></div>
+          <div class="row"><b>Trucha de Yarumal</b><i></i><span>$31.000</span></div>
+          <div class="row"><b>Ajiaco con pollo</b><i></i><span>$24.000</span></div>
+          <div class="row"><b>Chorizo con arepa</b><i></i><span>$14.000</span></div>
+          <div class="row"><b>Posta en panela</b><i></i><span>$32.000</span></div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="foot-big" aria-hidden="true">Tres <em>Tiempos</em></div>
-  <div class="foot-row">
-    <span>Yarumal, Antioquia · © <span id="yr"></span></span>
-    <div class="socials"><a href="#">Instagram</a><a href="#">Facebook</a><a href="https://wa.me/573105550142">WhatsApp</a></div>
-    <span class="credit">Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
-  </div>
-</footer>
+  <!-- la tarde -->
+  <section class="afternoon" data-h="16.2">
+    <div class="pin">
+      <div class="img" id="aftImg"><img src="img/colinas.jpg" alt="Montañas verdes cubiertas de nubes al atardecer" loading="lazy"></div>
+      <div class="txt">
+        <span class="mono">Tarde · 17:00</span>
+        <h2 style="margin-top:1rem">A las cinco<br><em>baja la niebla.</em></h2>
+        <p>Es la hora de encender las velas y prender la brasa.</p>
+      </div>
+    </div>
+  </section>
 
+  <!-- TERCER TIEMPO -->
+  <section id="cena" data-h="19.4" data-chapter="2">
+    <div class="chapter-tag"><span class="mono">Tercer tiempo</span><span class="rule"></span><span class="mono">18:00 — 22:30</span></div>
+    <div class="chapter-head">
+      <h2 class="split-lines">La <em>cena</em></h2>
+      <div class="hours"><span class="mono" style="color:var(--ink-2)">A la luz de</span><b>la brasa</b></div>
+    </div>
+    <ol class="night-list" id="nightList">
+      <li data-img="img/a-carne.jpg"><span class="n">01</span><h3>Lomo a la brasa</h3><span class="price">$46.000</span><p>300 g de lomo fino, chimichurri de cilantro cimarrón y papa criolla crocante.</p></li>
+      <li data-img="img/c-picada.jpg"><span class="n">02</span><h3>Picada de la montaña</h3><span class="price">$58.000</span><p>Chicharrón, chorizo, morcilla, costilla, patacón y arepitas. Para tres, o para dos con hambre.</p></li>
+      <li data-img="img/a-chorizo.jpg"><span class="n">03</span><h3>Costillas en panela</h3><span class="price">$39.000</span><p>Costilla de cerdo glaseada lentamente en panela y ají dulce, con arroz de la casa.</p></li>
+      <li data-img="img/a-plato.jpg"><span class="n">04</span><h3>Trucha al ajillo</h3><span class="price">$38.000</span><p>Trucha entera de criadero local, dorada en mantequilla de ajo, con patacón.</p></li>
+    </ol>
+    <div class="bar-hero">
+      <img src="img/c-bar.jpg" alt="Barra del bar con luz tenue por la noche" loading="lazy" data-speed="-10">
+      <div class="over"><h3>La barra<br><em>de noche</em></h3><p>Coctelería con frutas de la región, aguardiente antioqueño y ron de caña. Viernes y sábados, hasta la medianoche.</p></div>
+    </div>
+    <div class="drinks">
+      <figure class="drink"><img src="img/c-coctel.jpg" alt="Bartender sirviendo un coctel" loading="lazy"><div class="info"><b>Lulo & guaro</b><span>Lulo macerado, aguardiente, panela · $24.000</span></div></figure>
+      <figure class="drink"><img src="img/c-martini.jpg" alt="Martini sobre la barra" loading="lazy"><div class="info"><b>Niebla</b><span>Ginebra, uchuva, tónica de flor de sauco · $26.000</span></div></figure>
+      <figure class="drink"><img src="img/c-cocteles.jpg" alt="Cocteles espumosos servidos en la barra" loading="lazy"><div class="info"><b>Tres tiempos</b><span>Ron añejo, café del norte, espuma de panela · $25.000</span></div></figure>
+    </div>
+  </section>
+  <div class="peek" id="peek" aria-hidden="true"><img alt=""></div>
+
+  <section id="reservar" data-h="21.6">
+    <div class="book">
+      <div>
+        <span class="mono" style="color:var(--ink-2)">Reservas · respondemos en minutos</span>
+        <h2 style="margin-top:1rem" class="split-lines">Guarde<br>su <em>mesa.</em></h2>
+        <form class="form" id="form" novalidate>
+          <div class="field"><label for="fn">Nombre</label><input id="fn" name="n" placeholder="¿A nombre de quién?" autocomplete="name"></div>
+          <div class="field"><label for="fd">Fecha</label><input id="fd" name="d" type="date"></div>
+          <div class="field"><label>Tiempo</label><div class="seg" id="segT"><button type="button" aria-pressed="false">Desayuno</button><button type="button" aria-pressed="true">Almuerzo</button><button type="button" aria-pressed="false">Cena</button></div></div>
+          <div class="field"><label>Personas</label><div class="seg" id="segP"><button type="button" aria-pressed="false">1</button><button type="button" aria-pressed="true">2</button><button type="button" aria-pressed="false">3</button><button type="button" aria-pressed="false">4</button><button type="button" aria-pressed="false">5+</button></div></div>
+          <button class="pill" type="submit"><span>Confirmar por WhatsApp</span><span class="arrow">→</span></button>
+          <p class="form-msg" id="formMsg" role="status"></p>
+        </form>
+      </div>
+      <div class="map">
+        <iframe title="Mapa de Tres Tiempos, parque principal de Yarumal" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Parque%20Principal%20Yarumal%2C%20Antioquia&z=16&output=embed"></iframe>
+        <div class="info">
+          <div><span>Dirección</span><b>Cl. 20 #19-35, Parque Principal</b></div>
+          <div><span>Horario</span><b>Mar a dom · 6:30 – 22:30</b></div>
+          <div><span>Teléfono</span><b><a href="tel:+573105550142" style="text-decoration:none">310 555 0142</a></b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer data-h="23.2">
+    <div class="bye split">Hasta <em>mañana.</em></div>
+    <p class="mono" style="color:var(--ink-2);margin-top:2rem">La cocina vuelve a encenderse a las 6:30</p>
+    <div class="row">
+      <span>Tres Tiempos · Yarumal, Antioquia · © <span id="yr"></span></span>
+      <div class="soc"><a href="#">Instagram</a><a href="#">Facebook</a><a href="https://wa.me/573105550142">WhatsApp</a></div>
+      <span class="credit">Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
+    </div>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script>
 (() => {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasGsap = !!window.gsap && !!window.ScrollTrigger;
+  if (!hasGsap) root.classList.add('no-gsap');
+  document.getElementById('yr').textContent = new Date().getFullYear();
 
-  /* ---------- paletas por momento ---------- */
-  const P = [
-    { at:7,  bg:'#dfe9ee', bg2:'#f1f5f6', ink:'#1d2a33', muted:'#56666f', accent:'#e2a023', accentInk:'#1d2a33', line:'rgba(29,42,51,.14)' },
-    { at:13, bg:'#ecead6', bg2:'#f7f5e8', ink:'#27261b', muted:'#6b6853', accent:'#c4432a', accentInk:'#fff8ee', line:'rgba(39,38,27,.14)' },
-    { at:20, bg:'#131a30', bg2:'#1c2542', ink:'#f1eadb', muted:'#a3a8bb', accent:'#f0b35a', accentInk:'#131a30', line:'rgba(241,234,219,.14)' },
+  /* ================= CIELO: la hora depende del scroll ================= */
+  const KEYS = [ // hora, arriba, abajo, color del astro, brillo
+    [5.5,'#141836','#5d3f63','#ffb38a','rgba(255,140,90,.35)'],
+    [6.5,'#6f93bf','#f2b48d','#ffcf95','rgba(255,170,100,.5)'],
+    [8,  '#8fbde0','#f1e3cf','#fff0c8','rgba(255,220,150,.45)'],
+    [12, '#86c1ea','#eef2f1','#fffbe8','rgba(255,245,210,.55)'],
+    [15.5,'#9dbfdc','#efe2c6','#fff1c4','rgba(255,225,160,.5)'],
+    [17.3,'#d9936a','#f4c48c','#ffb467','rgba(255,150,70,.55)'],
+    [18.4,'#4f4474','#dd7a5e','#ff8a55','rgba(255,110,60,.5)'],
+    [19.4,'#1a1f45','#3b2d5c','#f3ecd8','rgba(220,225,255,.18)'],
+    [21, '#070a1c','#141a38','#f3ecd8','rgba(220,225,255,.16)'],
+    [24, '#05071a','#0e1330','#f3ecd8','rgba(220,225,255,.14)'],
   ];
-  const hex = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
-  const mix = (a,b,t) => { const A=hex(a),B=hex(b); return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`; };
-  const smooth = t => t*t*(3-2*t);
+  const hex = h => [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const lerpC = (a,b,t) => { const A=hex(a),B=hex(b); return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`; };
+  const skyAt = h => {
+    let i = KEYS.findIndex(k => k[0] > h); if (i <= 0) i = i === 0 ? 1 : KEYS.length - 1;
+    const a = KEYS[i-1], b = KEYS[i], t = Math.min(1, Math.max(0, (h - a[0]) / (b[0] - a[0])));
+    return { top: lerpC(a[1],b[1],t), bot: lerpC(a[2],b[2],t), orb: lerpC(a[3],b[3],t), glow: t < .5 ? a[4] : b[4] };
+  };
 
-  function weights(h){
-    // mañana hasta 10, transición 10→12.5, mediodía hasta 16, transición 16→18.5, noche
-    if (h <= 10) return [0,0,0];
-    if (h < 12.5) return [0,1,smooth((h-10)/2.5)];
-    if (h <= 16) return [1,1,0];
-    if (h < 18.5) return [1,2,smooth((h-16)/2.5)];
-    return [2,2,0];
+  const orb = document.getElementById('orb'), clock = document.getElementById('clock');
+  const stars = document.getElementById('stars'), sctx = stars.getContext('2d');
+  let starList = [];
+  function sizeStars(){
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    stars.width = innerWidth * dpr; stars.height = innerHeight * dpr; sctx.setTransform(dpr,0,0,dpr,0,0);
+    starList = Array.from({length: Math.round(innerWidth * innerHeight / 6000)}, () => ({ x: Math.random()*innerWidth, y: Math.random()*innerHeight*.85, r: Math.random()*1.2+.2, p: Math.random()*6.28, s: .5+Math.random()*1.5 }));
   }
-  const phaseOf = h => h < 11.5 ? 0 : h < 17.5 ? 1 : 2;
-
-  const imgs = [...document.querySelectorAll('.window img')];
-  const swapSpans = [...document.querySelectorAll('#swap span')];
-  const zones = [...document.querySelectorAll('.zone')];
-  const tagTxt = ['Servimos desayuno','Hora del almuerzo','Cena y coctelería'];
-  const ledes = [
-    'Desayuno, almuerzo y cena frente al parque principal de Yarumal. La carta cambia con la luz del día.',
-    'A esta hora sale el menú del día: sopa, principio, proteína y jugo natural. Y la carta completa de la casa.',
-    'Luz baja, carnes a la brasa y coctelería con sabores de la montaña. La cocina cierra a las 22:30.'
-  ];
-  let currentPhase = -1;
-
-  const fmt = h => { const H=Math.floor(h), M=Math.round((h-H)*60/5)*5; const hh = M===60?H+1:H; return `${hh}:${String(M===60?0:M).padStart(2,'0')}`; };
-
-  function applyHour(h){
-    const [a,b,t] = weights(h);
-    const pa=P[a], pb=P[b];
-    root.style.setProperty('--bg', mix(pa.bg,pb.bg,t));
-    root.style.setProperty('--bg2', mix(pa.bg2,pb.bg2,t));
-    root.style.setProperty('--ink', mix(pa.ink,pb.ink,t));
-    root.style.setProperty('--muted', mix(pa.muted,pb.muted,t));
-    root.style.setProperty('--accent', mix(pa.accent,pb.accent,t));
-    const tt = t < .5 ? 0 : 1;
-    root.style.setProperty('--accent-ink', [pa,pb][tt].accentInk);
-    root.style.setProperty('--line', [pa,pb][tt].line);
-    imgs.forEach((im,i) => { const w = (i===a?1-t:0) + (i===b?t:0); im.style.opacity = a===b ? (i===a?1:0) : w; im.style.transform = `scale(${1.02 + (1-w)*0.06})`; });
-    document.body.classList.toggle('is-night', a===2 || (b===2 && t>.5));
-
-    const ph = phaseOf(h);
-    if (ph !== currentPhase){
-      swapSpans.forEach((s,i) => { s.style.transform = `translateY(${(i-ph)*110}%)`; s.style.opacity = i===ph?1:0; });
-      zones.forEach((z,i)=>z.classList.toggle('on', i===ph));
-      document.getElementById('winTag').textContent = tagTxt[ph];
-      document.getElementById('lede').textContent = ledes[ph];
-      document.getElementById('moonCut').style.transform = ph===2 ? 'translate(6px,-5px)' : 'translate(28px,-6px)';
-      if (currentPhase !== -1) setTab(ph); else setTab(ph, true);
-      document.getElementById('momentSel').selectedIndex = ph;
-      currentPhase = ph;
+  sizeStars(); addEventListener('resize', sizeStars);
+  let starAlpha = 0;
+  (function twinkle(t){
+    if (starAlpha > 0.01){
+      sctx.clearRect(0,0,innerWidth,innerHeight);
+      for (const s of starList){ const a = .35 + .65 * Math.abs(Math.sin(s.p + t/1000 * s.s * (reduce?0:1))); sctx.globalAlpha = a; sctx.fillStyle = '#fff'; sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, 6.283); sctx.fill(); }
     }
-    const f = fmt(h);
-    document.getElementById('bigClock').textContent = f;
-    document.getElementById('dialHour').textContent = f;
-    dialSvg.setAttribute('aria-valuenow', h.toFixed(1));
-    dialSvg.setAttribute('aria-valuetext', f);
-    placeSun(h);
-  }
+    requestAnimationFrame(twinkle);
+  })(0);
 
-  /* ---------- arco / sol ---------- */
-  const arc = document.getElementById('arc'), arcDone = document.getElementById('arcDone');
-  const sun = document.getElementById('sun'), dialSvg = document.getElementById('dialSvg');
-  const L = arc.getTotalLength();
-  const H0 = 6, H1 = 23;
-  arcDone.style.strokeDasharray = L;
-  const ticks = document.getElementById('ticks');
-  [6,9,12,15,18,21].forEach(h => {
-    const p = arc.getPointAtLength((h-H0)/(H1-H0)*L);
-    ticks.insertAdjacentHTML('beforeend', `<g class="tick"><line x1="${p.x}" y1="${p.y-7}" x2="${p.x}" y2="${p.y+7}"/><text x="${p.x}" y="${p.y-16}" text-anchor="middle">${h}:00</text></g>`);
-  });
-  function placeSun(h){
-    const len = (h-H0)/(H1-H0)*L;
-    const p = arc.getPointAtLength(len);
-    sun.setAttribute('transform', `translate(${p.x},${p.y})`);
-    arcDone.style.strokeDashoffset = L - len;
+  // anclas: cada sección dice qué hora es cuando su borde superior llega a la mitad de la pantalla
+  let anchors = [];
+  function measure(){
+    anchors = [...document.querySelectorAll('[data-h]')].map(el => ({ y: el.getBoundingClientRect().top + scrollY, h: +el.dataset.h })).sort((a,b)=>a.y-b.y);
   }
+  function hourNow(){
+    const y = scrollY + innerHeight * .5;
+    if (y <= anchors[0].y) return anchors[0].h;
+    for (let i = 1; i < anchors.length; i++){
+      if (y < anchors[i].y){ const a = anchors[i-1], b = anchors[i]; return a.h + (b.h - a.h) * (y - a.y) / (b.y - a.y); }
+    }
+    return anchors[anchors.length-1].h;
+  }
+  const fmt = h => { const H = Math.floor(h) % 24, M = Math.floor((h - Math.floor(h)) * 60); return `${String(H).padStart(2,'0')}:${String(M).padStart(2,'0')}`; };
 
-  // arrastre directo: el sol sigue al puntero sobre el arco
-  let hour = 7, target = 7, raf = null, dragging = false;
-  const samples = [...Array(171)].map((_,i)=>{ const p = arc.getPointAtLength(i/170*L); return {x:p.x,y:p.y,h:H0+i/170*(H1-H0)}; });
-  function hourFromPointer(e){
-    const pt = dialSvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-    const loc = pt.matrixTransform(dialSvg.getScreenCTM().inverse());
-    let best = samples[0], bd = Infinity;
-    for (const s of samples){ const d = (s.x-loc.x)**2 + (s.y-loc.y)**2*0.25; if (d<bd){bd=d;best=s;} }
-    return best.h;
+  let lastNight = null;
+  function paintSky(){
+    const h = hourNow(), c = skyAt(h);
+    root.style.setProperty('--sky-top', c.top); root.style.setProperty('--sky-bot', c.bot);
+    orb.style.setProperty('--orb', c.orb); orb.style.setProperty('--glow', c.glow);
+    // sol de 6:00 a 18:40, luna desde 19:00
+    const W = innerWidth, Hh = innerHeight;
+    let x, y, s = 1;
+    if (h < 18.8){ const t = Math.max(0, (h - 5.8) / 13); x = W * (.06 + .88 * t); y = Hh * (.95 - Math.sin(Math.PI * t) * .72); s = 1 - Math.sin(Math.PI*t) * .25; }
+    else { const t = Math.min(1, (h - 18.8) / 5); x = W * (.12 + .7 * t); y = Hh * (.95 - Math.sin(Math.PI * Math.min(.5, t * .9 + .05)) * .72); s = .7; }
+    orb.style.transform = `translate(${x}px,${y}px) scale(${s})`;
+    starAlpha = Math.max(0, Math.min(1, (h - 18.9) / 1.2));
+    stars.style.opacity = starAlpha;
+    const night = h > 18.75 ? '1' : '0';
+    if (night !== lastNight){ root.dataset.night = night; lastNight = night; }
+    clock.textContent = fmt(h);
+    // capítulo activo
+    const ch = h < 11.5 ? 0 : h < 17.5 ? 1 : 2;
+    chapterBtns.forEach((b,i) => b.classList.toggle('on', i === ch && h > 6.8 && h < 21.4));
+    chaptersNav.classList.toggle('show', h > 6.6 && h < 21.3);
   }
-  function animateTo(h, instant){
-    target = Math.min(H1, Math.max(H0, h));
-    if (instant || reduce){ hour = target; applyHour(hour); return; }
-    if (!raf) raf = requestAnimationFrame(step);
-  }
-  function step(){
-    hour += (target - hour) * (dragging ? .35 : .12);
-    if (Math.abs(target-hour) < .002) hour = target;
-    applyHour(hour);
-    raf = hour === target ? null : requestAnimationFrame(step);
-  }
-  dialSvg.addEventListener('pointerdown', e => { dragging = true; dialSvg.setPointerCapture(e.pointerId); animateTo(hourFromPointer(e)); });
-  dialSvg.addEventListener('pointermove', e => { if (dragging) animateTo(hourFromPointer(e)); });
-  const end = () => { dragging = false; };
-  dialSvg.addEventListener('pointerup', end); dialSvg.addEventListener('pointercancel', end);
-  dialSvg.addEventListener('keydown', e => {
-    const k = {ArrowRight:.5, ArrowUp:.5, ArrowLeft:-.5, ArrowDown:-.5}[e.key];
-    if (k){ e.preventDefault(); animateTo(target + k, true); }
-  });
+  const chapterBtns = [...document.querySelectorAll('.chapters button')];
+  const chaptersNav = document.querySelector('.hud .chapters');
 
-  /* ---------- hora real de Yarumal ---------- */
-  function bogotaHour(){
-    const s = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
-    const [H,M] = s.split(':').map(Number); return {H,M,s};
-  }
-  function tickClock(){ const {s} = bogotaHour(); document.getElementById('liveTime').textContent = `Yarumal · ${s}`; }
-  tickClock(); setInterval(tickClock, 30000);
+  /* ================= menú del día según el día real ================= */
+  const MENUS = {
+    0:['Domingo','Sancocho de gallina','Arroz, yuca, aguacate y arepa','Limonada de panela','Arroz con leche'],
+    1:['Lunes','Crema de ahuyama','Frijoles con garra, carne molida y maduro','Jugo de mora','Brevas con arequipe'],
+    2:['Martes','Sopa de arroz','Sudado de pollo con papa criolla','Jugo de lulo','Gelatina de pata'],
+    3:['Miércoles','Sancocho trifásico','Arroz, aguacate y ensalada de repollo','Aguapanela con limón','Postre de natas'],
+    4:['Jueves','Mondongo antioqueño','Arroz, tajadas y arepa','Jugo de guayaba','Mazamorra con panela'],
+    5:['Viernes','Sopa de pasta','Trucha frita con patacón y arroz de coco','Jugo de maracuyá','Cocadas'],
+    6:['Sábado','Consomé de pollo','Bandeja paisa completa','Jugo de mora','Dulce de guayaba con queso'],
+  };
+  const day = ({Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6})[new Intl.DateTimeFormat('en-US',{timeZone:'America/Bogota',weekday:'short'}).format(new Date())];
+  const m = MENUS[day];
+  document.getElementById('tDay').textContent = m[0] + ' · hoy';
+  document.getElementById('tBody').innerHTML = [['Sopa',m[1]],['Seco',m[2]],['Jugo natural',m[3]],['Postre',m[4]]].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 
-  /* ---------- carta ---------- */
-  const MENU = [
-    { title:'Para empezar<br><em>el día.</em>', items:[
-      ['Calentado paisa','Frijol, arroz y carne desmechada de la víspera, huevo frito, hogao y arepa de chócolo.','18.900','d4','Favorito'],
-      ['Huevos al plato con hogao','Dos huevos de gallina campesina sobre hogao de tomate chonto, pan de masa madre tostado.','16.500','d1'],
-      ['Tostadas de panela','Pan brioche empapado en leche y panela, queso campesino, frutos rojos y miel de caña.','17.900','d2'],
-      ['Chocolate con queso','Chocolate de mesa batido con molinillo, queso fresco para derretir y almojábana tibia.','9.800','d3'],
-      ['Tinto del norte','Café de origen de fincas de Yarumal y Angostura, en greca o filtrado a mano.','4.500','d3'],
-    ]},
-    { title:'El almuerzo,<br><em>sin prisa.</em>', items:[
-      ['Menú del día','Sopa de la casa, principio, proteína del día, arroz, ensalada y jugo natural. Cambia cada día.','22.000','a4','Diario'],
-      ['Bowl de trucha ahumada','Trucha de Yarumal ahumada en casa, quinua, aguacate, encurtidos y vinagreta de maracuyá.','29.900','a1'],
-      ['Posta negra cartagenera','Posta de res en salsa de panela y cerveza, arroz con coco y tajadas de maduro.','32.000','a2'],
-      ['Mesa para compartir','Chicharrón, chorizo de Santa Rosa, arepitas, guacamole y ají de la casa. Para dos o tres.','44.000','a3'],
-    ]},
-    { title:'Cuando baja<br><em>la luz.</em>', items:[
-      ['Lomo a la brasa','300 g de lomo fino, chimichurri de cilantro cimarrón, papa criolla crocante.','46.000','c1','Del chef'],
-      ['Costillas en panela','Costillas de cerdo glaseadas lentamente en panela y ají dulce, puré de ahuyama.','39.000','c2'],
-      ['Trucha al ajillo','Trucha entera dorada en mantequilla de ajo, patacón y ensalada de hojas.','38.000','c3'],
-      ['Lulo y aguardiente','Coctel de la casa: lulo macerado, aguardiente antioqueño, panela y hierbabuena.','24.000','c4'],
-    ]},
-  ];
-  const dishes = document.getElementById('dishes');
-  const tabs = [...document.querySelectorAll('.tabs button')];
-  const pill = document.getElementById('pill');
-  let tabNow = -1, swapTimer;
-  function movePill(i){ const b = tabs[i]; pill.style.width = b.offsetWidth+'px'; pill.style.transform = `translateX(${b.offsetLeft-5+5}px)`; }
-  function render(i){
-    dishes.innerHTML = MENU[i].items.map((d,k)=>`
-      <li class="dish" data-img="img/${d[3]}.jpg">
-        <span class="n">${String(k+1).padStart(2,'0')}</span>
-        <h4>${d[0]}${d[4]?`<span class="badge">${d[4]}</span>`:''}</h4>
-        <span class="price">$${d[2]}</span>
-        <p>${d[1]}</p>
-        <img class="thumb" src="img/${d[3]}.jpg" alt="${d[0]}" loading="lazy">
-      </li>`).join('');
-    document.getElementById('menuTitle').innerHTML = MENU[i].title;
-    bindPeek();
-  }
-  function setTab(i, instant){
-    if (i === tabNow) return;
-    tabNow = i;
-    tabs.forEach((b,k)=>b.setAttribute('aria-selected', k===i));
-    movePill(i);
-    clearTimeout(swapTimer);
-    if (instant || reduce){ render(i); return; }
-    dishes.classList.add('swapping');
-    swapTimer = setTimeout(()=>{ render(i);
-      [...dishes.children].forEach((li,k)=>{ li.style.transitionDelay = (k*50)+'ms'; });
-      requestAnimationFrame(()=>requestAnimationFrame(()=>dishes.classList.remove('swapping')));
-      setTimeout(()=>[...dishes.children].forEach(li=>li.style.transitionDelay=''), 700);
-    }, 260);
-  }
-  tabs.forEach((b,i)=>b.addEventListener('click',()=>setTab(i)));
-  addEventListener('resize', ()=>movePill(tabNow));
-
-  // vista previa que sigue al cursor con inercia
-  const peek = document.getElementById('peek'), peekImg = document.getElementById('peekImg');
-  let px=0,py=0,tx=0,ty=0,peekRaf=null,peekOn=false;
-  function peekLoop(){ px+=(tx-px)*.16; py+=(ty-py)*.16; const r=(tx-px)*.04;
-    peek.style.transform=`translate(${px-130}px,${py-160}px) rotate(${Math.max(-8,Math.min(8,r))}deg) scale(${peekOn?1:.9})`;
-    peekRaf = (peekOn || Math.abs(tx-px)>.5) ? requestAnimationFrame(peekLoop) : null; }
-  function bindPeek(){
-    if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-    dishes.querySelectorAll('.dish').forEach(li=>{
-      li.addEventListener('mouseenter',e=>{ peekImg.src=li.dataset.img; peekOn=true; peek.style.opacity=1; if(!px){px=tx=e.clientX;py=ty=e.clientY;} if(!peekRaf) peekRaf=requestAnimationFrame(peekLoop); });
-      li.addEventListener('mouseleave',()=>{ peekOn=false; peek.style.opacity=0; });
-    });
-  }
-  addEventListener('mousemove',e=>{ tx=e.clientX+140; ty=e.clientY; });
-
-  /* ---------- testimonios ---------- */
-  const qs=[...document.querySelectorAll('.quote')], qd=[...document.querySelectorAll('#qdots button')];
-  let qi=0, qt;
-  function showQ(i){ qs[qi].classList.remove('on'); qd[qi].classList.remove('on'); qi=i; qs[qi].classList.add('on'); void qd[qi].offsetWidth; qd[qi].classList.add('on'); clearTimeout(qt); qt=setTimeout(()=>showQ((qi+1)%qs.length),6000); }
-  qd.forEach((b,i)=>b.addEventListener('click',()=>showQ(i)));
-  qt=setTimeout(()=>showQ(1),6000);
-
-  /* ---------- reserva ---------- */
-  let pax=2; const paxEl=document.getElementById('pax');
-  document.querySelectorAll('.stepper button').forEach(b=>b.addEventListener('click',()=>{
-    pax=Math.min(20,Math.max(1,pax+ +b.dataset.s)); paxEl.textContent=pax; paxEl.classList.remove('bump'); void paxEl.offsetWidth; paxEl.classList.add('bump');
+  /* ================= reserva ================= */
+  const fd = document.getElementById('fd'); fd.value = fd.min = new Date().toLocaleDateString('en-CA');
+  document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
   }));
-  const date=document.getElementById('date'); const today=new Date(); date.min=today.toLocaleDateString('en-CA'); date.value=date.min;
-  document.getElementById('form').addEventListener('submit',e=>{
-    e.preventDefault(); const f=e.target, ok=document.getElementById('formOk');
-    if(!f.n.value.trim()){ ok.textContent='Escribe el nombre de la reserva para continuar.'; f.n.focus(); return; }
-    const msg=`Hola Tres Tiempos, quiero reservar: ${f.m.value} para ${pax} persona${pax>1?'s':''} el ${f.d.value}, a nombre de ${f.n.value.trim()}.`;
-    ok.textContent='Abriendo WhatsApp con tu reserva lista…';
-    window.open('https://wa.me/573105550142?text='+encodeURIComponent(msg),'_blank','noopener');
+  document.getElementById('form').addEventListener('submit', e => {
+    e.preventDefault();
+    const n = document.getElementById('fn'), msg = document.getElementById('formMsg');
+    if (!n.value.trim()){ msg.textContent = 'Escriba el nombre de la reserva para continuar.'; n.focus(); return; }
+    const t = document.querySelector('#segT [aria-pressed="true"]').textContent, p = document.querySelector('#segP [aria-pressed="true"]').textContent;
+    const text = `Hola Tres Tiempos, quiero reservar para ${t.toLowerCase()} el ${fd.value}, ${p} persona(s), a nombre de ${n.value.trim()}.`;
+    msg.textContent = 'Abriendo WhatsApp con su reserva lista…';
+    window.open('https://wa.me/573105550142?text=' + encodeURIComponent(text), '_blank', 'noopener');
   });
 
-  /* ---------- scroll ---------- */
-  const nav=document.getElementById('nav');
-  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30),{passive:true});
-  const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} }),{rootMargin:'0px 0px -10% 0px'});
-  document.querySelectorAll('.rv,.reveal-clip').forEach((el,i)=>{ if(el.classList.contains('moment')) el.style.transitionDelay=(i%3*90)+'ms'; io.observe(el); });
-  document.getElementById('yr').textContent=new Date().getFullYear();
+  /* ================= vista previa que sigue al cursor (cena) ================= */
+  const peek = document.getElementById('peek'), peekImg = peek.querySelector('img');
+  if (matchMedia('(hover:hover) and (pointer:fine)').matches){
+    let px = 0, py = 0, tx = 0, ty = 0, vis = false;
+    addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+    document.querySelectorAll('#nightList li').forEach(li => {
+      li.addEventListener('mouseenter', () => { peekImg.src = li.dataset.img; vis = true; if (hasGsap) gsap.to(peek, { opacity:1, scale:1, duration:.5, ease:'expo.out' }); else peek.style.opacity = 1; });
+      li.addEventListener('mouseleave', () => { vis = false; if (hasGsap) gsap.to(peek, { opacity:0, scale:.8, duration:.35, ease:'power2.out' }); else peek.style.opacity = 0; });
+    });
+    (function loop(){ const dx = tx - px; px += dx * .14; py += (ty - py) * .14;
+      peek.style.transform = `translate(${px + 40}px,${py - 190}px) rotate(${Math.max(-10,Math.min(10,dx*.05))}deg) scale(${peek.style.opacity > 0 ? 1 : .8})`;
+      requestAnimationFrame(loop); })();
+  }
 
-  /* ---------- arranque: hora real, con un barrido de entrada ---------- */
-  const {H,M} = bogotaHour();
-  const real = Math.min(22.5, Math.max(6.2, H + M/60));
-  applyHour(6.2);
-  requestAnimationFrame(()=>movePill(tabNow));
-  setTimeout(()=>animateTo(real), reduce?0:500);
-  document.fonts && document.fonts.ready.then(()=>movePill(tabNow));
+  /* ================= sin GSAP: solo cielo con scroll nativo ================= */
+  measure();
+  if (!hasGsap){
+    document.getElementById('loader').remove();
+    addEventListener('scroll', paintSky, { passive:true }); addEventListener('resize', () => { measure(); paintSky(); });
+    paintSky(); return;
+  }
+
+  /* ================= GSAP + Lenis ================= */
+  gsap.registerPlugin(ScrollTrigger); if (window.SplitText) gsap.registerPlugin(SplitText);
+  let lenis = null;
+  if (!reduce && window.Lenis){
+    lenis = new Lenis({ lerp: .085, wheelMultiplier: 1 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  const goTo = target => lenis ? lenis.scrollTo(target, { duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) }) : document.querySelector(target).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  document.querySelectorAll('[data-scroll]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); goTo(a.getAttribute('href')); }));
+  chapterBtns.forEach(b => b.addEventListener('click', () => goTo(b.dataset.go)));
+
+  ScrollTrigger.create({ start: 0, end: 'max', onUpdate: paintSky });
+  ScrollTrigger.addEventListener('refresh', () => { measure(); paintSky(); });
+
+  const split = (el, type) => window.SplitText ? SplitText.create(el, { type, mask: type.includes('lines') ? 'lines' : undefined }) : null;
+
+  /* ---------- preloader: amanece ---------- */
+  const heroL1 = split(document.querySelector('.hero .l1'), 'chars');
+  const heroL2 = split(document.querySelector('.hero .l2'), 'chars');
+  const heroWin = document.getElementById('heroWin');
+  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  const lt = { h: 5 };
+  if (lenis) lenis.stop();
+  tl.to('.loader .line', { scaleX: 1, duration: 1.1, ease: 'expo.inOut' })
+    .to(lt, { h: 6, duration: 1.3, ease: 'power2.inOut', onUpdate: () => document.getElementById('loadTime').textContent = fmt(lt.h) }, '<')
+    .to('.loader .sun', { y: -86, duration: 1.4, ease: 'power3.out' }, '-=.8')
+    .to('.loader .word', { opacity: 1, duration: .8 }, '-=1')
+    .fromTo('#loader', { clipPath: 'inset(0% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.2, ease: 'expo.inOut' }, '+=.25')
+    .set('#loader', { display: 'none' })
+    .from(heroL1 ? heroL1.chars : '.hero .l1', { yPercent: 110, rotate: 6, duration: 1.4, stagger: .05 }, '-=.6')
+    .from(heroL2 ? heroL2.chars : '.hero .l2', { yPercent: 110, rotate: 6, duration: 1.4, stagger: .04 }, '<.15')
+    .fromTo(heroWin, { clipPath: 'inset(48% 0% 48% 0% round 999px)' }, { clipPath: 'inset(0% 0% 0% 0% round 999px)', duration: 1.8, ease: 'expo.inOut' }, '<.2')
+    .from(heroWin.querySelector('img'), { scale: 1.4, duration: 2.2 }, '<')
+    .from('.hero .fade', { opacity: 0, y: 20, duration: 1, stagger: .1 }, '<.6')
+    .add(() => lenis && lenis.start());
+  gsap.set([heroL1 ? heroL1.chars : [], heroL2 ? heroL2.chars : []].flat(), { transformOrigin: '0 100%' });
+  [heroL1, heroL2].forEach(s => s && gsap.set(s.chars, { display: 'inline-block' }));
+  document.querySelectorAll('.hero h1 span').forEach(s => s.style.overflow = 'hidden');
+
+  // la ventana del héroe se abre en panorámica al bajar
+  gsap.to(heroWin.querySelector('img'), { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to('.hero h1 .l1', { xPercent: -8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to('.hero h1 .l2', { xPercent: 8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+  /* ---------- manifiesto palabra por palabra ---------- */
+  const man = document.getElementById('manifest');
+  const words = split(man, 'words');
+  if (words){
+    words.words.forEach(w => w.classList.add('w'));
+    gsap.to(words.words, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: man, start: 'top 80%', end: 'bottom 45%', scrub: true } });
+  }
+
+  /* ---------- títulos de capítulo ---------- */
+  document.querySelectorAll('.split-lines').forEach(el => {
+    const s = split(el, 'lines,words');
+    gsap.from(s ? s.words : el, { yPercent: 115, duration: 1.3, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: el, start: 'top 85%' } });
+  });
+  gsap.utils.toArray('.chapter-tag').forEach(t => {
+    gsap.from(t.querySelector('.rule'), { scaleX: 0, transformOrigin: 'left', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: t, start: 'top 88%' } });
+  });
+
+  /* ---------- vitrina del desayuno ---------- */
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 901px)', () => {
+    const frame = document.getElementById('frameD'), imgs = [...frame.querySelectorAll('img')], cap = document.getElementById('capD');
+    const items = [...document.querySelectorAll('.dishes .dish')];
+    items.forEach((li, i) => ScrollTrigger.create({
+      trigger: li, start: 'top 55%', end: 'bottom 55%',
+      onToggle: self => { if (!self.isActive) return;
+        items.forEach(x => x.classList.toggle('on', x === li));
+        imgs.forEach((im, k) => { if (k === i){ im.classList.add('on'); im.style.zIndex = 1; } else if (im.classList.contains('on')){ im.style.zIndex = 0; setTimeout(() => { if (items[k] && !items[k].classList.contains('on')) im.classList.remove('on'); }, 1100); } });
+        cap.textContent = li.querySelector('h3').textContent;
+      }
+    }));
+
+    /* café: recorrido horizontal fijado */
+    const track = document.getElementById('coffeeTrack');
+    const dist = () => track.scrollWidth - innerWidth;
+    const tw = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#cafe', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 1, invalidateOnRefresh: true } });
+    track.querySelectorAll('figure img').forEach(img => gsap.fromTo(img, { xPercent: -8 }, { xPercent: 8, ease: 'none', scrollTrigger: { trigger: img.parentElement, containerAnimation: tw, start: 'left right', end: 'right left', scrub: true } }));
+  });
+
+  /* ---------- parallax de imágenes ---------- */
+  gsap.utils.toArray('[data-speed]').forEach(img => {
+    const sp = +img.dataset.speed;
+    gsap.fromTo(img, { yPercent: -sp }, { yPercent: sp, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+  gsap.utils.toArray('.mosaic figure, .drink, .bar-hero').forEach(f => {
+    gsap.fromTo(f, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: f, start: 'top 88%' } });
+  });
+  gsap.from('.ticket', { y: 80, rotate: -8, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.lunch', start: 'top 75%' } });
+  gsap.from('.ticket .stamp', { scale: 1.8, opacity: 0, duration: .6, ease: 'back.out(2)', scrollTrigger: { trigger: '.ticket', start: 'top 55%' } });
+  gsap.from('.carta .row', { opacity: 0, y: 24, duration: .9, stagger: .06, ease: 'expo.out', scrollTrigger: { trigger: '.carta', start: 'top 85%' } });
+
+  /* ---------- la tarde: la imagen se abre a pantalla completa ---------- */
+  gsap.timeline({ scrollTrigger: { trigger: '.afternoon', start: 'top top', end: '+=130%', pin: true, scrub: 1 } })
+    .fromTo('#aftImg', { clipPath: 'inset(24% 32% 24% 32% round 300px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'power2.inOut' })
+    .to('#aftImg img', { scale: 1, ease: 'power2.inOut' }, 0)
+    .from('.afternoon .txt', { opacity: 0, y: 60, ease: 'power2.out' }, .3);
+
+  /* ---------- cena ---------- */
+  gsap.from('#nightList li', { opacity: 0, y: 40, duration: 1.1, stagger: .08, ease: 'expo.out', scrollTrigger: { trigger: '#nightList', start: 'top 80%' } });
+
+  /* ---------- reserva y despedida ---------- */
+  gsap.from('.field', { opacity: 0, x: -20, duration: .9, stagger: .07, ease: 'expo.out', scrollTrigger: { trigger: '.form', start: 'top 85%' } });
+  gsap.fromTo('.map', { clipPath: 'inset(0% 0% 0% 100% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 28px)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: '.map', start: 'top 80%' } });
+  const bye = split(document.querySelector('footer .bye'), 'chars');
+  if (bye){ gsap.set(bye.chars, { display: 'inline-block' }); gsap.from(bye.chars, { yPercent: 100, opacity: 0, duration: 1.2, stagger: .04, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 70%' } }); }
+
+  addEventListener('load', () => ScrollTrigger.refresh());
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+  measure(); paintSky();
 })();
 </script>
 </body>

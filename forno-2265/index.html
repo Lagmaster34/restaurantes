@@ -4,273 +4,368 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Forno 2265 · Pizzería en Yarumal</title>
-<meta name="description" content="Pizza napolitana de horno de leña a 2.265 metros, en Yarumal, Antioquia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2713%27 fill=%27%23e0301e%27/%3E%3C/svg%3E">
+<meta name="description" content="Forno 2265: pizza napolitana en horno de leña a 485° en Yarumal, la ciudad más fría de Antioquia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --fog:#eceff2;        /* niebla de Yarumal */
-  --fog-2:#f7f8fa;
-  --ink:#111315;
-  --ink-2:#4b525a;
-  --tomato:#d7261e;
-  --ember:#ff6a2b;
-  --basil:#2e7d4f;
-  --line:rgba(17,19,21,.1);
-  --display:"Bricolage Grotesque", system-ui, sans-serif;
-  --body:system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-  --g:clamp(16px,4vw,48px);
-  --r:28px;
+  --noche:#0b0b0c; --carbon:#141312; --horno:#170b06;
+  --tomate:#e0301e; --brasa:#ff7a2f; --llama:#ffb45c;
+  --niebla:#c9d3da; --niebla-2:#8a99a6; --harina:#f4f0e8; --albahaca:#2f7d4f;
+  --ink:#0b0b0c; --soft:rgba(244,240,232,.62); --line:rgba(244,240,232,.14);
+  --sans:"Archivo", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, monospace;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --g:clamp(18px,4vw,56px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-body{background:var(--fog);color:var(--ink);font:400 1.0625rem/1.5 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+html{-webkit-tap-highlight-color:transparent}
+body{background:var(--noche);color:var(--harina);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%}
 a{color:inherit}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
-:focus-visible{outline:3px solid color-mix(in srgb,var(--tomato) 60%,transparent);outline-offset:3px;border-radius:10px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--tomate);color:#fff}
+:focus-visible{outline:2px solid var(--brasa);outline-offset:3px;border-radius:8px}
+.mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.cond{font-family:var(--sans);font-stretch:62%;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;line-height:.84}
+.wide{font-stretch:125%}
+.grain{position:fixed;inset:-50%;z-index:95;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-2%)}60%{transform:translate(-2%,-4%)}80%{transform:translate(4%,2%)}}
 
-/* tipografía: tracking según tamaño */
-.display{font-family:var(--display);font-optical-sizing:auto;font-weight:800;letter-spacing:-.045em;line-height:.9}
-h2{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,5.4vw,4.6rem);letter-spacing:-.04em;line-height:.95}
-.eyebrow{font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--tomato);margin-bottom:.9rem;display:block}
-.lead{font-size:1.18rem;color:var(--ink-2);letter-spacing:-.01em;max-width:40ch}
+/* cursor */
+.cursor{position:fixed;left:0;top:0;z-index:99;pointer-events:none;display:none}
+.cursor .dot{position:absolute;width:8px;height:8px;margin:-4px;border-radius:50%;background:var(--tomate)}
+.cursor .ring{position:absolute;width:44px;height:44px;margin:-22px;border-radius:50%;border:1px solid rgba(244,240,232,.4);display:grid;place-items:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;transition:width .45s var(--ease),height .45s var(--ease),margin .45s var(--ease),background-color .3s,border-color .3s}
+.cursor .ring span{opacity:0;transition:opacity .2s}
+.cursor.big .ring{width:92px;height:92px;margin:-46px;background:var(--tomate);border-color:var(--tomate)}
+.cursor.big .ring span{opacity:1}
+@media (hover:hover) and (pointer:fine){.cursor{display:block}}
 
-/* botones: respuesta en pointer-down */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:52px;padding:0 1.5rem;border-radius:999px;background:var(--ink);color:#fff;font-weight:600;font-size:1rem;letter-spacing:-.01em;text-decoration:none;transition:transform .1s ease-out, background-color .2s ease}
+/* botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;height:52px;padding:0 1.5rem;border-radius:999px;background:var(--tomate);color:#fff;font-weight:600;font-size:1rem;text-decoration:none;transition:transform .1s ease-out, background-color .2s ease}
 .btn:active{transform:scale(.97)}
-.btn.red{background:var(--tomato)}
-.btn.glass{background:rgba(255,255,255,.55);color:var(--ink);backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
-@media (hover:hover) and (pointer:fine){.btn:hover{background:#2a2e33}.btn.red:hover{background:#be1f18}.btn.glass:hover{background:rgba(255,255,255,.75)}}
+.btn.ghost{background:rgba(244,240,232,.08);box-shadow:inset 0 0 0 1px var(--line);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.btn.light{background:var(--harina);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){.btn:hover{background:#c52615}.btn.ghost:hover{background:rgba(244,240,232,.16)}.btn.light:hover{background:#fff}}
 
-/* nav: material translúcido, el contenido pasa por debajo */
-.nav{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:50;width:min(1100px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:1rem;height:60px;padding:0 8px 0 20px;border-radius:999px;background:rgba(247,248,250,.62);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 0 0 1px rgba(17,19,21,.06), 0 8px 30px -12px rgba(17,19,21,.25)}
-.logo{display:flex;align-items:center;gap:.55rem;font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.04em;text-decoration:none}
-.logo i{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 70%,var(--ember),var(--tomato) 60%);box-shadow:0 0 14px rgba(255,106,43,.6)}
-.nav ul{display:flex;gap:1.6rem;list-style:none;font-size:.93rem;font-weight:500}
-.nav ul a{text-decoration:none;color:var(--ink-2);transition:color .2s ease}
-.nav ul a:hover{color:var(--ink)}
-.nav .btn{height:44px;padding:0 1.1rem;font-size:.92rem}
+/* nav */
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:60;width:min(1180px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:1rem;height:58px;padding:0 7px 0 20px;border-radius:999px;background:rgba(14,13,12,.5);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(255,255,255,.06)}
+.logo{text-decoration:none;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.logo i{width:12px;height:12px;border-radius:50%;background:var(--tomate);box-shadow:0 0 12px var(--brasa)}
+.nav ul{list-style:none;display:flex;gap:1.8rem;font-size:.9rem;font-weight:500}
+.nav ul a{text-decoration:none;color:var(--soft);transition:color .2s}
+.nav ul a:hover{color:#fff}
+.nav .btn{height:44px;font-size:.92rem;padding:0 1.1rem}
 
-/* hero */
-.hero{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);align-items:center;padding:100px var(--g) 40px;max-width:1400px;margin:0 auto}
-.temps{display:grid;gap:.4rem}
-.temp{display:flex;align-items:baseline;gap:1rem}
-.temp .label{font-size:.95rem;font-weight:600;color:var(--ink-2);min-width:5.5em;letter-spacing:-.01em}
-.temp .num{font-family:var(--display);font-weight:800;font-size:clamp(4.6rem,11vw,10rem);letter-spacing:-.06em;line-height:.85;font-variant-numeric:tabular-nums}
-.temp.cold .num{color:#8a9aa8}
-.temp.hot .num{background:linear-gradient(180deg,var(--ember),var(--tomato) 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .lead{margin:1.8rem 0 2rem}
-.hero-ctas{display:flex;gap:.7rem;flex-wrap:wrap}
-.oven{position:relative;border-radius:36px;overflow:hidden;aspect-ratio:4/5;max-height:80svh;justify-self:end;width:100%;box-shadow:0 40px 80px -30px rgba(17,19,21,.5)}
-.oven img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1.08);transition:transform 1.6s cubic-bezier(.23,1,.32,1)}
-.oven.in img{transform:scale(1)}
-.oven .glass-chip{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:14px 16px 14px 20px;border-radius:22px;background:rgba(20,20,22,.42);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
-.glass-chip b{display:block;font-weight:600;letter-spacing:-.01em}
-.glass-chip span{font-size:.85rem;opacity:.75}
-.live{display:inline-flex;align-items:center;gap:.45rem;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.14);padding:.45rem .75rem;border-radius:999px;white-space:nowrap}
-.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#9aa3ab}
-.live.open::before{background:#43d17a;box-shadow:0 0 0 3px rgba(67,209,122,.25)}
+/* preloader */
+.loader{position:fixed;inset:0;z-index:100;background:var(--noche);display:grid;place-items:center;overflow:hidden}
+.loader .word{font-size:clamp(4rem,16vw,15rem);display:flex;color:var(--harina)}
+.loader .word span{display:inline-block;font-stretch:62%}
+.loader .bar{position:absolute;left:var(--g);right:var(--g);bottom:40px;height:1px;background:var(--line)}
+.loader .bar i{position:absolute;inset:0;background:var(--tomate);transform-origin:left;transform:scaleX(0)}
+.loader .meta{position:absolute;left:var(--g);right:var(--g);bottom:54px;display:flex;justify-content:space-between;color:var(--soft)}
+.loader .wipe{position:absolute;inset:0;background:var(--tomate);transform:translateY(100%)}
+.no-gsap .loader{display:none}
 
-section{padding:clamp(80px,11vw,140px) var(--g);max-width:1400px;margin:0 auto}
+/* ---------- HÉROE: del frío al fuego ---------- */
+.intro{position:relative;height:100svh;overflow:hidden;background:#1b2126}
+.intro .layer{position:absolute;inset:0}
+.intro .cold img{width:100%;height:100%;object-fit:cover;filter:grayscale(.45) contrast(1.05) brightness(.95);transform:scale(1.1)}
+.intro .cold::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,33,38,.2),rgba(27,33,38,.75))}
+#fog{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.intro .hot{clip-path:circle(0% at 50% 58%);z-index:2}
+.intro .hot img{width:100%;height:100%;object-fit:cover;transform:scale(1.25)}
+.intro .hot::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 80% at 50% 60%,transparent 30%,rgba(23,11,6,.8) 100%)}
+.intro .temp{position:absolute;left:var(--g);bottom:clamp(90px,14vh,150px);z-index:5}
+.intro .temp .lbl{display:block;margin-bottom:.8rem;color:var(--soft)}
+.intro .temp .num{display:block;font-weight:800;font-size:clamp(7rem,24vw,24rem);line-height:.8;letter-spacing:-.03em;font-stretch:62%;color:var(--niebla);font-variant-numeric:tabular-nums}
+.intro .temp .num sup{font-size:.4em;vertical-align:.95em;margin-left:.02em}
+.thermo{position:absolute;right:var(--g);top:50%;transform:translateY(-50%);z-index:5;height:min(56vh,480px);width:46px;display:flex;gap:12px}
+.thermo .tube{position:relative;width:4px;height:100%;border-radius:4px;background:rgba(244,240,232,.18);overflow:hidden}
+.thermo .tube i{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(0deg,var(--niebla),var(--brasa) 60%,var(--tomate));transform-origin:bottom;transform:scaleY(.03)}
+.thermo .ticks{display:flex;flex-direction:column;justify-content:space-between;font-family:var(--mono);font-size:.62rem;color:var(--soft)}
+.intro .copy{position:absolute;right:calc(var(--g) + 80px);bottom:clamp(90px,14vh,150px);z-index:5;max-width:30ch;text-align:right}
+.intro .copy p{font-size:1.15rem;line-height:1.35}
+.intro .copy p + p{position:absolute;right:0;bottom:0;opacity:0}
+.intro .copy b{display:block;font-size:1.7rem;font-weight:700;font-stretch:80%;line-height:1;margin-bottom:.4rem;text-transform:uppercase}
+.intro .mark{position:absolute;left:0;right:0;top:clamp(96px,16vh,160px);z-index:4;text-align:center;font-weight:900;font-size:clamp(3.4rem,12vw,13rem);line-height:.8;letter-spacing:-.02em;color:#fff;text-transform:uppercase;font-stretch:125%;opacity:0;pointer-events:none;text-shadow:0 10px 60px rgba(0,0,0,.45)}
+.intro .mark small{display:block;font-family:var(--mono);font-size:.8rem;letter-spacing:.3em;font-weight:400;margin-top:1.2rem;font-stretch:100%;opacity:.8}
+.intro .hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:5;color:var(--soft);display:flex;align-items:center;gap:.8rem}
+.intro .hint i{width:22px;height:34px;border-radius:14px;border:1.5px solid rgba(244,240,232,.4);position:relative}
+.intro .hint i::after{content:"";position:absolute;left:50%;top:6px;width:3px;height:7px;margin-left:-1.5px;border-radius:2px;background:#fff;animation:wheel 1.6s var(--ease) infinite}
+@keyframes wheel{to{transform:translateY(10px);opacity:0}}
 
-/* ---------- la rueda ---------- */
+/* cinta de palabras */
+.ribbon{padding:clamp(60px,9vw,120px) 0;overflow:hidden;background:var(--noche)}
+.ribbon .row{display:flex;white-space:nowrap;width:max-content;font-weight:900;font-size:clamp(4rem,12vw,11rem);line-height:.9;text-transform:uppercase;letter-spacing:-.02em}
+.ribbon .row span{padding-right:.35em;font-stretch:62%}
+.ribbon .row span:nth-child(odd){color:transparent;-webkit-text-stroke:1.5px rgba(244,240,232,.35)}
+.ribbon .row span em{font-style:normal;color:var(--tomate);-webkit-text-stroke:0}
+
+/* ---------- LA MASA: horizontal ---------- */
+.process{position:relative;overflow:hidden}
+.process .track{display:flex;width:max-content}
+.panel{flex:none;width:100vw;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:stretch;position:relative}
+.panel .ph{position:relative;overflow:hidden;margin:clamp(90px,12vh,120px) 0 clamp(40px,6vh,70px) var(--g);border-radius:28px}
+.panel .ph img{position:absolute;inset:0;width:130%;max-width:none;height:100%;object-fit:cover;left:-15%}
+.panel .txt{display:flex;flex-direction:column;justify-content:center;padding:clamp(90px,12vh,120px) var(--g) 60px clamp(24px,5vw,80px)}
+.panel .step{margin-bottom:1.4rem}
+.panel .big{font-weight:900;font-size:clamp(7rem,19vw,19rem);line-height:.78;letter-spacing:-.03em;font-stretch:62%;font-variant-numeric:tabular-nums}
+.panel .big small{font-size:.32em;font-stretch:100%;letter-spacing:0;margin-left:.08em;font-weight:700}
+.panel h3{font-size:clamp(1.6rem,2.6vw,2.4rem);font-weight:700;font-stretch:90%;letter-spacing:-.01em;margin:1.6rem 0 .6rem;text-transform:uppercase}
+.panel p{max-width:38ch;font-size:1.08rem;opacity:.75}
+.panel.flour{background:var(--harina);color:var(--ink)}
+.panel.fire{background:var(--horno);color:var(--harina)}
+.panel.fire .big{background:linear-gradient(180deg,var(--llama),var(--brasa) 50%,var(--tomate));-webkit-background-clip:text;background-clip:text;color:transparent}
+.panel.red{background:var(--tomate);color:#fff}
+.panel .glow{position:absolute;right:-10%;bottom:-30%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(255,122,47,.45),transparent);filter:blur(20px);pointer-events:none}
+
+/* ---------- CARTA: la rueda ---------- */
+.menu{padding:clamp(100px,13vw,170px) var(--g);max-width:1440px;margin:0 auto}
+.menu-head{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:clamp(40px,6vw,80px)}
+.menu-head h2{font-weight:900;font-size:clamp(4rem,10vw,9.5rem);line-height:.8;text-transform:uppercase;letter-spacing:-.02em;font-stretch:62%}
+.menu-head h2 em{font-style:italic;color:var(--tomate);font-stretch:62%}
+.menu-head p{max-width:34ch;color:var(--soft)}
 .wheel-sec{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,5vw,72px);align-items:center}
-.wheel-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:1rem}
 .wheel-wrap{position:relative;aspect-ratio:1;width:100%;max-width:620px;justify-self:center;touch-action:none;user-select:none;-webkit-user-select:none}
-.peel{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 45%,#2b2f34,#15171a 70%);box-shadow:inset 0 2px 0 rgba(255,255,255,.06), 0 40px 70px -30px rgba(17,19,21,.6)}
+.peel{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 42%,#2a2623,#121110 70%);box-shadow:inset 0 2px 0 rgba(255,255,255,.05),0 60px 90px -40px rgba(0,0,0,.9),0 0 120px -20px rgba(255,122,47,.25)}
+.peel::after{content:"";position:absolute;inset:6%;border-radius:50%;border:1px dashed rgba(244,240,232,.1)}
 .rotor{position:absolute;inset:0;will-change:transform;cursor:grab}
 .rotor.grabbing{cursor:grabbing}
-.rotor img{position:absolute;inset:13%;width:74%;height:74%;border-radius:50%;pointer-events:none;filter:drop-shadow(0 16px 24px rgba(0,0,0,.45))}
+.rotor img{position:absolute;inset:13%;width:74%;height:74%;border-radius:50%;pointer-events:none;filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))}
 .ring-label{position:absolute;left:50%;top:50%;width:0;height:0}
-.ring-label span{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.45);transition:color .25s ease}
+.ring-label span{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,240,232,.4);transition:color .25s ease}
 .ring-label.on span{color:#fff}
-.pointer{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:16px solid var(--tomato);filter:drop-shadow(0 4px 6px rgba(215,38,30,.4));z-index:3}
-.wheel-hint{position:absolute;left:50%;bottom:-2.6rem;transform:translateX(-50%);font-size:.85rem;color:var(--ink-2);white-space:nowrap;display:flex;gap:.5rem;align-items:center}
-.wheel-hint kbd{font:inherit;font-size:.75rem;padding:.1rem .4rem;border-radius:6px;background:#fff;box-shadow:0 0 0 1px var(--line)}
-
-.detail{background:var(--fog-2);border-radius:var(--r);overflow:hidden;box-shadow:0 0 0 1px var(--line), 0 30px 60px -40px rgba(17,19,21,.35)}
-.detail .ph{aspect-ratio:16/10;overflow:hidden;position:relative;background:#ddd}
+.pointer{position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:16px solid var(--tomate);filter:drop-shadow(0 4px 8px rgba(224,48,30,.6));z-index:3}
+.wheel-hint{position:absolute;left:50%;bottom:-2.8rem;transform:translateX(-50%);color:var(--soft);white-space:nowrap}
+.detail{background:rgba(244,240,232,.05);border-radius:28px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);backdrop-filter:blur(20px)}
+.detail .ph{aspect-ratio:16/10;overflow:hidden;position:relative;background:#1c1a18}
 .detail .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .detail .body{padding:26px 28px 28px}
 .detail .row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
-.detail h3{font-family:var(--display);font-weight:800;font-size:2.2rem;letter-spacing:-.04em;line-height:1}
-.detail .price{font-family:var(--display);font-weight:600;font-size:1.5rem;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.detail p{color:var(--ink-2);margin:.7rem 0 1.2rem;min-height:3em}
-.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.3rem}
-.tags span{font-size:.78rem;font-weight:600;padding:.35rem .7rem;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line)}
-.tags span.hot{color:var(--tomato)}
+.detail h3{font-weight:900;font-size:clamp(2.4rem,3.6vw,3.4rem);line-height:.85;text-transform:uppercase;font-stretch:62%;letter-spacing:-.01em}
+.detail .price{font-family:var(--mono);font-size:1.1rem}
+.detail p{color:var(--soft);margin:.9rem 0 1.2rem;min-height:3em}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.tags span{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:.4rem .7rem;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line)}
+.tags span.hot{color:var(--brasa);box-shadow:inset 0 0 0 1px var(--brasa)}
 .detail .actions{display:flex;gap:.6rem}
 .detail .actions .btn{flex:1}
-.nav-btn{width:52px;height:52px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px var(--line);display:grid;place-items:center;flex:none;transition:transform .1s ease-out}
+.nav-btn{width:52px;height:52px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line);display:grid;place-items:center;flex:none;transition:transform .1s ease-out, background-color .2s}
 .nav-btn:active{transform:scale(.94)}
+@media (hover:hover){.nav-btn:hover{background:rgba(244,240,232,.08)}}
 .xf{transition:opacity .22s ease, filter .22s ease}
 .xf.out{opacity:0;filter:blur(8px)}
 
-/* ---------- proceso ---------- */
-.process{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:3rem}
-.step{background:var(--fog-2);border-radius:var(--r);padding:30px;min-height:320px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 0 0 1px var(--line);position:relative;overflow:hidden}
-.step .big{font-family:var(--display);font-weight:800;font-size:clamp(4.4rem,8vw,7rem);letter-spacing:-.06em;line-height:.85}
-.step .big small{font-size:.35em;letter-spacing:-.02em;margin-left:.1em}
-.step h3{font-size:1.2rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.35rem}
-.step p{color:var(--ink-2);font-size:.97rem}
-.step .seq{position:absolute;top:26px;right:28px;font-size:.8rem;font-weight:600;color:var(--ink-2)}
-.step.fire{background:linear-gradient(160deg,#1a1c1f,#0d0e10);color:#fff}
-.step.fire p,.step.fire .seq{color:rgba(255,255,255,.65)}
-.step.fire .big{background:linear-gradient(180deg,#ffb36b,var(--ember) 45%,var(--tomato));-webkit-background-clip:text;background-clip:text;color:transparent}
-.step.fire::after{content:"";position:absolute;left:-20%;right:-20%;bottom:-60%;height:90%;background:radial-gradient(closest-side,rgba(255,106,43,.45),transparent);filter:blur(10px);animation:ember 5s ease-in-out infinite alternate}
-@keyframes ember{from{opacity:.55;transform:translateY(8px)}to{opacity:1;transform:translateY(-6px)}}
+/* ---------- PIZZAIOLO ---------- */
+.chef{position:relative;height:120vh;overflow:hidden;display:grid;align-items:end}
+.chef img{position:absolute;inset:-10% 0;width:100%;height:120%;object-fit:cover}
+.chef::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--noche) 0%,transparent 25%,transparent 45%,rgba(11,11,12,.92) 100%)}
+.chef .q{position:relative;z-index:2;padding:0 var(--g) clamp(60px,10vh,120px);max-width:1200px}
+.chef blockquote{font-weight:800;font-size:clamp(2.6rem,6.4vw,6.4rem);line-height:.92;text-transform:uppercase;font-stretch:70%;letter-spacing:-.01em}
+.chef blockquote em{font-style:italic;color:var(--llama)}
+.chef cite{display:block;margin-top:1.6rem;font-style:normal;color:var(--soft)}
 
-/* ---------- galería con arrastre ---------- */
-.rail-wrap{margin-top:3rem;position:relative}
-.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px var(--g) 20px;margin:0 calc(var(--g) * -1);scrollbar-width:none;cursor:grab;overscroll-behavior-x:contain}
-.rail::-webkit-scrollbar{display:none}
-.rail.dragging{cursor:grabbing;scroll-snap-type:none}
-.rail figure{flex:none;width:min(78vw,420px);aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;position:relative;scroll-snap-align:start}
-.rail figure:first-child{margin-left:0}
-.rail img{width:100%;height:100%;object-fit:cover;pointer-events:none}
-.rail figcaption{position:absolute;left:14px;bottom:14px;right:14px;padding:12px 14px;border-radius:16px;background:rgba(20,20,22,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;font-weight:600;letter-spacing:-.01em;font-size:.95rem}
-.rail-ctrl{display:flex;gap:.5rem;justify-content:flex-end;margin-top:.4rem}
+/* ---------- GALERÍA ---------- */
+.gallery{padding:clamp(80px,10vw,140px) 0;overflow:hidden}
+.gallery .head{padding:0 var(--g);margin-bottom:2.4rem;display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap}
+.gallery h2{font-weight:900;font-size:clamp(3.4rem,8vw,7.5rem);line-height:.82;text-transform:uppercase;font-stretch:62%}
+.strip{display:flex;gap:14px;width:max-content;margin-bottom:14px}
+.strip figure{flex:none;width:clamp(240px,26vw,380px);aspect-ratio:4/5;border-radius:22px;overflow:hidden;position:relative}
+.strip figure:nth-child(even){aspect-ratio:1;align-self:center}
+.strip img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+@media (hover:hover){.strip figure:hover img{transform:scale(1.07)}}
 
-/* ---------- visita ---------- */
-.visit{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
-.visit .card{background:var(--fog-2);border-radius:var(--r);padding:clamp(24px,3vw,40px);box-shadow:0 0 0 1px var(--line);display:flex;flex-direction:column;gap:1.4rem}
-.facts{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem 1.6rem}
-.facts dt{font-size:.8rem;color:var(--ink-2);font-weight:600}
-.facts dd{font-weight:600;letter-spacing:-.01em;margin-top:.15rem}
-.status{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.9rem;padding:.5rem .85rem;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line);align-self:flex-start}
-.status i{width:8px;height:8px;border-radius:50%;background:#9aa3ab}
-.status.open i{background:#2fbf6a;box-shadow:0 0 0 3px rgba(47,191,106,.2)}
-.map{border-radius:var(--r);overflow:hidden;min-height:460px;position:relative;box-shadow:0 0 0 1px var(--line)}
-.map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(.35) contrast(1.05)}
-.map .glass-chip{position:absolute;left:14px;top:auto;right:auto;bottom:34px;background:rgba(247,248,250,.7);color:var(--ink);padding:12px 16px}
+/* ---------- VISITA ---------- */
+.visit{padding:clamp(100px,12vw,160px) var(--g);max-width:1440px;margin:0 auto;display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(24px,4vw,64px);align-items:stretch}
+.visit h2{font-weight:900;font-size:clamp(3.4rem,7.4vw,7rem);line-height:.82;text-transform:uppercase;font-stretch:62%}
+.visit h2 em{font-style:normal;color:var(--tomate)}
+.status{display:inline-flex;align-items:center;gap:.6rem;margin:2rem 0 1.6rem;padding:.55rem .95rem;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);font-weight:600;font-size:.92rem}
+.status i{width:8px;height:8px;border-radius:50%;background:#7b7f84}
+.status.open i{background:#35d07f;box-shadow:0 0 0 4px rgba(53,208,127,.2)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem 1.8rem;border-top:1px solid var(--line);padding-top:1.6rem}
+.facts dt{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.facts dd{font-weight:600;margin-top:.2rem}
+.visit .ctas{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:2rem}
+.map{position:relative;border-radius:28px;overflow:hidden;min-height:520px;box-shadow:inset 0 0 0 1px var(--line);background:#1c1a18}
+.map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:invert(.9) hue-rotate(180deg) grayscale(.4) brightness(.95) contrast(1.05)}
+.map .chip{position:absolute;left:14px;bottom:34px;padding:12px 16px;border-radius:18px;background:rgba(14,13,12,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:inset 0 0 0 1px var(--line)}
+.map .chip b{display:block;font-weight:700}
+.map .chip span{font-size:.85rem;color:var(--soft)}
 
-footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
-.foot{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:36px}
-.foot .display{font-size:clamp(3.4rem,10vw,8rem)}
-.foot .display span{color:var(--tomato)}
-.foot-meta{display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;font-size:.92rem;color:var(--ink-2)}
-.foot-meta a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--tomato)}
-.foot-meta .soc{display:flex;gap:1rem}
-.foot-meta .soc a{border:0;font-weight:500;color:var(--ink-2)}
+/* ---------- PIE ---------- */
+footer{padding:40px var(--g) 130px;overflow:hidden}
+.foot-mark{display:flex;justify-content:space-between;font-weight:900;font-size:clamp(4rem,22vw,26rem);line-height:.8;text-transform:uppercase;user-select:none}
+.foot-mark span{display:inline-block;font-stretch:62%;transition:color .3s}
+.foot-mark span.d{color:var(--tomate)}
+.foot-row{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;margin-top:2.4rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--soft);font-size:.9rem}
+.foot-row a{color:#fff;text-decoration:none}
+.foot-row .credit a{font-weight:600;border-bottom:1.5px solid var(--tomate)}
+.foot-row .soc{display:flex;gap:1.2rem}
 
-/* ---------- barra y hoja del pedido ---------- */
-.bag{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;transform:translate(-50%,140%);display:flex;align-items:center;gap:14px;padding:8px 8px 8px 20px;border-radius:999px;background:rgba(17,19,21,.78);color:#fff;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 20px 40px -12px rgba(0,0,0,.5);will-change:transform;min-width:min(420px,calc(100vw - 24px))}
-.bag .count{display:grid;place-items:center;min-width:28px;height:28px;border-radius:999px;background:var(--tomato);font-weight:700;font-size:.85rem;padding:0 8px}
-.bag .txt{flex:1;font-weight:600;letter-spacing:-.01em}
-.bag .txt small{display:block;font-weight:500;opacity:.65;font-size:.8rem}
-.bag .btn{height:44px;background:#fff;color:var(--ink)}
-.scrim{position:fixed;inset:0;z-index:70;background:rgba(10,11,12,.4);opacity:0;pointer-events:none}
-.sheet{position:fixed;left:50%;bottom:0;z-index:71;width:min(560px,100%);max-height:86svh;display:flex;flex-direction:column;border-radius:28px 28px 0 0;background:rgba(247,248,250,.92);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:0 -20px 60px -20px rgba(0,0,0,.45);transform:translate(-50%,105%);will-change:transform;padding-bottom:env(safe-area-inset-bottom);visibility:hidden}
+/* ---------- pedido ---------- */
+.bag{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;transform:translate(-50%,140%);display:flex;align-items:center;gap:14px;padding:8px 8px 8px 20px;border-radius:999px;background:rgba(244,240,232,.9);color:var(--ink);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:0 20px 40px -12px rgba(0,0,0,.6);will-change:transform;min-width:min(420px,calc(100vw - 24px))}
+.bag .count{display:grid;place-items:center;min-width:28px;height:28px;border-radius:999px;background:var(--tomate);color:#fff;font-weight:700;font-size:.85rem;padding:0 8px}
+.bag .txt{flex:1;font-weight:600}
+.bag .txt small{display:block;font-weight:500;opacity:.6;font-size:.8rem}
+.bag .btn{height:44px;background:var(--ink);color:#fff}
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.5);opacity:0;pointer-events:none}
+.sheet{position:fixed;left:50%;bottom:0;z-index:71;width:min(560px,100%);max-height:86svh;display:flex;flex-direction:column;border-radius:28px 28px 0 0;background:rgba(24,22,20,.92);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 -20px 60px -20px rgba(0,0,0,.6);transform:translate(-50%,105%);will-change:transform;padding-bottom:env(safe-area-inset-bottom);visibility:hidden}
 .grab{padding:10px 0 4px;display:grid;place-items:center;cursor:grab;touch-action:none}
-.grab i{width:40px;height:5px;border-radius:5px;background:rgba(17,19,21,.2)}
+.grab i{width:40px;height:5px;border-radius:5px;background:rgba(244,240,232,.25)}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:6px 24px 14px;touch-action:none}
-.sheet-head h3{font-family:var(--display);font-weight:800;font-size:1.8rem;letter-spacing:-.04em}
-.close{width:34px;height:34px;border-radius:50%;background:rgba(17,19,21,.07);display:grid;place-items:center}
+.sheet-head h3{font-weight:900;font-size:2.2rem;text-transform:uppercase;font-stretch:62%;line-height:1}
+.close{width:34px;height:34px;border-radius:50%;background:rgba(244,240,232,.08);display:grid;place-items:center}
 .lines{list-style:none;overflow:auto;padding:0 24px;flex:1}
 .line{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
 .line img{width:56px;height:56px;border-radius:14px;object-fit:cover}
-.line b{display:block;font-weight:600;letter-spacing:-.01em}
-.line small{color:var(--ink-2)}
-.qty{display:flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:3px;box-shadow:0 0 0 1px var(--line)}
+.line b{display:block;font-weight:600}
+.line small{color:var(--soft)}
+.qty{display:flex;align-items:center;gap:4px;border-radius:999px;padding:3px;box-shadow:inset 0 0 0 1px var(--line)}
 .qty button{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem;transition:transform .1s ease-out, background-color .15s}
-.qty button:active{transform:scale(.9);background:var(--fog)}
+.qty button:active{transform:scale(.9);background:rgba(244,240,232,.1)}
 .qty output{min-width:1.4em;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
 .sheet-foot{padding:18px 24px 22px;display:grid;gap:12px}
-.sheet-foot .sum{display:flex;justify-content:space-between;font-weight:600}
-.sheet-foot .sum b{font-family:var(--display);font-size:1.6rem;letter-spacing:-.03em}
-.empty{padding:30px 24px;color:var(--ink-2);text-align:center}
-
-/* aparición */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .7s ease, transform .9s cubic-bezier(.23,1,.32,1)}
-.rv.in{opacity:1;transform:none}
+.sheet-foot .sum{display:flex;justify-content:space-between;align-items:baseline;font-weight:600}
+.sheet-foot .sum b{font-family:var(--mono);font-size:1.4rem}
+.empty{padding:30px 24px;color:var(--soft);text-align:center}
 
 @media (max-width:960px){
   .nav ul{display:none}
-  .hero{grid-template-columns:1fr;padding-top:96px}
-  .oven{aspect-ratio:4/3.4;max-height:none;order:-1}
+  .thermo{display:none}
+  .intro .copy{right:var(--g);left:var(--g);bottom:auto;top:120px;text-align:left;max-width:none}
+  .intro .copy p + p{left:0;right:auto;top:0;bottom:auto}
+  .panel{grid-template-columns:1fr;grid-template-rows:42% 58%;width:100vw}
+  .panel .ph{margin:90px var(--g) 0}
+  .panel .txt{padding:24px var(--g) 40px;justify-content:flex-start}
+  .panel .big{font-size:clamp(5.4rem,26vw,9rem)}
+  .panel h3{margin-top:.8rem}
   .wheel-sec{grid-template-columns:1fr}
-  .wheel-wrap{max-width:440px;margin-bottom:3rem}
-  .process{grid-template-columns:1fr}
-  .step{min-height:240px}
+  .wheel-wrap{max-width:440px;margin-bottom:3.4rem}
   .visit{grid-template-columns:1fr}
-  .map{min-height:380px}
-  .foot-meta{align-items:flex-start}
+  .map{min-height:400px}
+  .chef{height:90vh}
+  .intro .mark{top:44%;font-size:15vw}
+  .detail .actions .btn{white-space:nowrap;padding:0 .9rem;font-size:.92rem}
 }
 @media (max-width:520px){
-  .ring-label span{font-size:.64rem;letter-spacing:.03em}
-  .temp .label{min-width:4.6em;font-size:.85rem}
-  .detail h3{font-size:1.8rem}
-  .bag{padding-left:14px}
-  .oven{aspect-ratio:1}
-  .oven .glass-chip{left:10px;right:10px;bottom:10px;padding:10px 10px 10px 14px}
-  .oven .glass-chip div span{display:none}
+  .ring-label span{font-size:.56rem;letter-spacing:.05em}
+  .detail h3{font-size:2.2rem}
+  .facts{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition-duration:.15s!important}
-  .rv{transform:none}
+  .grain,.intro .hint i::after{animation:none}
 }
 @media (prefers-reduced-transparency:reduce){
-  .nav,.bag,.sheet,.glass-chip,.rail figcaption{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-  .nav{background:var(--fog-2)} .sheet{background:var(--fog-2)} .bag{background:var(--ink)}
-}
-@media (prefers-contrast:more){
-  .nav,.sheet{background:#fff;box-shadow:0 0 0 2px var(--ink)}
+  .nav,.bag,.sheet,.map .chip,.detail{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .nav{background:var(--carbon)} .sheet{background:var(--carbon)}
 }
 </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span class="ring"><span id="cursorTxt">Gira</span></span><span class="dot"></span></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="heat" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="2" seed="4" result="n">
+      <animate attributeName="baseFrequency" dur="4s" values="0.008 0.03;0.010 0.042;0.008 0.03" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="word cond" id="loadWord"><span>F</span><span>O</span><span>R</span><span>N</span><span>O</span></div>
+  <div class="meta mono"><span>Encendiendo el horno</span><span id="loadNum">14°</span></div>
+  <div class="bar"><i id="loadBar"></i></div>
+  <div class="wipe"></div>
+</div>
 
 <nav class="nav" aria-label="Principal">
-  <a class="logo" href="#top"><i aria-hidden="true"></i>Forno 2265</a>
+  <a class="logo cond" href="#top" data-scroll><i aria-hidden="true"></i>Forno 2265</a>
   <ul>
-    <li><a href="#carta">Carta</a></li>
-    <li><a href="#masa">La masa</a></li>
-    <li><a href="#fotos">Fotos</a></li>
-    <li><a href="#visita">Visítanos</a></li>
+    <li><a href="#masa" data-scroll>La masa</a></li>
+    <li><a href="#carta" data-scroll>Carta</a></li>
+    <li><a href="#fotos" data-scroll>Fotos</a></li>
+    <li><a href="#visita" data-scroll>Visítanos</a></li>
   </ul>
-  <a class="btn red" href="#carta">Pedir pizza</a>
+  <a class="btn" href="#carta" data-scroll>Pedir pizza</a>
 </nav>
 
-<header class="hero" id="top">
-  <div>
-    <div class="temps" aria-label="Afuera 14 grados, adentro del horno 485 grados">
-      <div class="temp cold rv"><span class="label">Afuera</span><span class="num" id="tOut">14°</span></div>
-      <div class="temp hot rv"><span class="label">Adentro</span><span class="num" id="tIn">485°</span></div>
-    </div>
-    <p class="lead rv">Yarumal es la ciudad más fría de Antioquia. Por eso nuestro horno de leña nunca se apaga: pizza napolitana en 90 segundos, a 2.265 metros sobre el mar.</p>
-    <div class="hero-ctas rv">
-      <a class="btn red" href="#carta">Ver la carta</a>
-      <a class="btn glass" href="#visita">Cómo llegar</a>
-    </div>
+<header class="intro" id="top">
+  <div class="layer cold">
+    <img src="img/niebla.jpg" alt="Palmas de cera entre la niebla de la montaña antioqueña" fetchpriority="high">
+    <canvas id="fog" aria-hidden="true"></canvas>
   </div>
-  <figure class="oven" id="oven">
-    <img src="img/hero.jpg" alt="Pizza napolitana frente al horno de leña encendido" fetchpriority="high">
-    <figcaption class="glass-chip"><div><b>Horno de leña encendido</b><span>Cada pizza sale en 90 segundos</span></div><span class="live" id="liveOpen">Abierto</span></figcaption>
-  </figure>
+  <div class="layer hot" id="hot"><img src="img/fuego.jpg" alt="Pizza napolitana dentro del horno de leña entre las llamas" id="fireImg"></div>
+  <div class="mark" id="mark">Forno 2265<small>Pizza napolitana · horno de leña</small></div>
+  <div class="temp">
+    <span class="lbl mono" id="tLbl">Afuera · Yarumal, 2.265 m</span>
+    <span class="num" id="tNum">14<sup>°</sup></span>
+  </div>
+  <div class="thermo" aria-hidden="true"><div class="tube"><i id="thermo"></i></div><div class="ticks"><span>500°</span><span>400°</span><span>300°</span><span>200°</span><span>100°</span><span>0°</span></div></div>
+  <div class="copy">
+    <p id="copyCold"><b>La ciudad más fría de Antioquia.</b>Aquí la niebla baja a las cinco y la ruana no se quita. Por eso encendimos un horno que nunca se apaga.</p>
+    <p id="copyHot"><b>Adentro, 485 grados.</b>Leña de eucalipto, piso de piedra y noventa segundos. Así se hace una napolitana.</p>
+  </div>
+  <div class="hint mono"><i></i>Baja para entrar al horno</div>
 </header>
 
-<section id="carta">
-  <div class="wheel-sec">
-    <div class="wheel-head rv">
-      <div>
-        <span class="eyebrow">La carta</span>
-        <h2>Gira la pizza.</h2>
-      </div>
-      <p class="lead">Agárrala y dale vuelta: cada porción es una pizza distinta de la carta. También puedes usar las flechas del teclado.</p>
-    </div>
+<section class="ribbon" aria-hidden="true">
+  <div class="row" id="rib1"><span>Napolitana</span><span><em>485°</em></span><span>Leña</span><span>72 horas</span><span>Yarumal</span><span><em>90 s</em></span><span>Napolitana</span><span><em>485°</em></span><span>Leña</span><span>72 horas</span><span>Yarumal</span><span><em>90 s</em></span></div>
+</section>
 
-    <div class="wheel-wrap rv" id="wheel" role="listbox" aria-label="Pizzas de la carta" tabindex="0">
+<section class="process" id="masa">
+  <div class="track" id="track">
+    <article class="panel flour">
+      <div class="ph"><img src="img/masa-harina.jpg" alt="Bola de masa sobre harina" loading="lazy"></div>
+      <div class="txt">
+        <span class="mono step">Paso 01 · La masa</span>
+        <div class="big"><span class="count" data-to="72">0</span><small>horas</small></div>
+        <h3>Fermentación en frío</h3>
+        <p>Harina tipo 00, agua, sal y masa madre. Tres días de reposo lento: el clima de Yarumal hace la mitad del trabajo.</p>
+      </div>
+    </article>
+    <article class="panel fire">
+      <div class="glow"></div>
+      <div class="ph"><img src="img/llamas.jpg" alt="Fuego de leña dentro del horno" loading="lazy"></div>
+      <div class="txt">
+        <span class="mono step">Paso 02 · El fuego</span>
+        <div class="big"><span class="count" data-to="485">0</span>°</div>
+        <h3>Horno de leña y piedra</h3>
+        <p>Construido a mano con ladrillo refractario. Leña de eucalipto de la región, encendida desde las tres de la tarde.</p>
+      </div>
+    </article>
+    <article class="panel red">
+      <div class="ph"><img src="img/napoli2.jpg" alt="Pizza margherita recién horneada" loading="lazy"></div>
+      <div class="txt">
+        <span class="mono step">Paso 03 · La mesa</span>
+        <div class="big"><span class="count" data-to="90">0</span><small>segundos</small></div>
+        <h3>Directo a su mesa</h3>
+        <p>Borde inflado y manchado, centro tierno. Sin lámparas de calor: se come en su mejor minuto.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="menu" id="carta">
+  <div class="menu-head">
+    <h2>La <em>carta</em></h2>
+    <p>Agarre la pizza y dele vuelta: cada porción es una pizza distinta. También funciona con las flechas del teclado.</p>
+  </div>
+  <div class="wheel-sec">
+    <div class="wheel-wrap" id="wheel" role="listbox" aria-label="Pizzas de la carta" tabindex="0" data-cursor="Gira">
       <div class="peel"></div>
       <span class="pointer" aria-hidden="true"></span>
-      <div class="rotor" id="rotor">
-        <img src="img/spin.webp" alt="" draggable="false">
-      </div>
-      <span class="wheel-hint" aria-hidden="true">Arrastra para girar · <kbd>←</kbd><kbd>→</kbd></span>
+      <div class="rotor" id="rotor"><img src="img/spin.webp" alt="" draggable="false"></div>
+      <span class="wheel-hint mono" aria-hidden="true">Arrastre para girar · ← →</span>
     </div>
-
-    <article class="detail rv" aria-live="polite">
+    <article class="detail" aria-live="polite">
       <div class="ph"><img id="dImg" class="xf" src="img/p-margherita.jpg" alt=""></div>
       <div class="body">
         <div class="row xf" id="dRow"><h3 id="dName">Margherita</h3><span class="price" id="dPrice">$32.000</span></div>
@@ -278,7 +373,7 @@ footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
         <div class="tags xf" id="dTags"></div>
         <div class="actions">
           <button class="nav-btn" id="prev" aria-label="Pizza anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 3 5 9l6 6"/></svg></button>
-          <button class="btn red" id="add">Agregar al pedido</button>
+          <button class="btn" id="add">Agregar al pedido</button>
           <button class="nav-btn" id="next" aria-label="Pizza siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 3 6 6-6 6"/></svg></button>
         </div>
       </div>
@@ -286,86 +381,66 @@ footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
   </div>
 </section>
 
-<section id="masa" style="padding-top:0">
-  <div class="rv">
-    <span class="eyebrow">Cómo se hace</span>
-    <h2>Tres números<br>y una pizza.</h2>
-  </div>
-  <div class="process">
-    <article class="step rv">
-      <span class="seq">Paso 1</span>
-      <div class="big">72<small>h</small></div>
-      <div><h3>Fermentación lenta</h3><p>La masa reposa tres días en frío. El clima de Yarumal ayuda: más aroma, más ligera, sin pesadez.</p></div>
-    </article>
-    <article class="step fire rv">
-      <span class="seq">Paso 2</span>
-      <div class="big">485°</div>
-      <div><h3>Horno de leña</h3><p>Leña de eucalipto de la región. El piso de piedra dorará la base mientras el borde se infla y se manchea.</p></div>
-    </article>
-    <article class="step rv">
-      <span class="seq">Paso 3</span>
-      <div class="big">90<small>s</small></div>
-      <div><h3>Directo a la mesa</h3><p>Noventa segundos de horno y sale. Sin lámparas de calor, sin esperas: se come en su mejor minuto.</p></div>
-    </article>
+<section class="chef">
+  <img src="img/pizzaiolo.jpg" alt="Pizzaiolo metiendo una pizza al horno de leña" loading="lazy" id="chefImg">
+  <div class="q">
+    <blockquote id="chefQ">“La pizza no se hace. <em>Se cuida</em> noventa segundos.”</blockquote>
+    <cite class="mono">Mateo Restrepo · pizzaiolo, formado en Nápoles, nacido en Yarumal</cite>
   </div>
 </section>
 
-<section id="fotos" style="padding-top:0">
-  <div class="rv" style="display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap">
-    <div><span class="eyebrow">En la mesa</span><h2>Para compartir<br>(o no).</h2></div>
+<section class="gallery" id="fotos">
+  <div class="head"><h2>Recién<br>salidas</h2><span class="mono" style="color:var(--soft)">@forno2265</span></div>
+  <div class="strip" id="s1">
+    <figure><img src="img/napoli.jpg" alt="Pizza napolitana con albahaca" loading="lazy"></figure>
+    <figure><img src="img/brasas.jpg" alt="Pizza sobre las brasas del horno" loading="lazy"></figure>
+    <figure><img src="img/vapor.jpg" alt="Pizza humeante" loading="lazy"></figure>
+    <figure><img src="img/masa-bolas.jpg" alt="Bolas de masa reposando" loading="lazy"></figure>
+    <figure><img src="img/compartir.jpg" alt="Porción con queso estirado" loading="lazy"></figure>
+    <figure><img src="img/horno-ladrillo.jpg" alt="Horno de ladrillo con pizzaiolo" loading="lazy"></figure>
   </div>
-  <div class="rail-wrap rv">
-    <div class="rail" id="rail">
-      <figure><img src="img/compartir.jpg" alt="Porción de pizza con el queso estirándose" loading="lazy" draggable="false"><figcaption>El queso que se estira</figcaption></figure>
-      <figure><img src="img/vapor.jpg" alt="Pizza recién salida del horno humeando" loading="lazy" draggable="false"><figcaption>Recién salida, todavía humeando</figcaption></figure>
-      <figure><img src="img/napoli.jpg" alt="Primer plano de pizza napolitana con albahaca" loading="lazy" draggable="false"><figcaption>Borde inflado y manchado de leña</figcaption></figure>
-      <figure><img src="img/rucula.jpg" alt="Pizza con rúgula fresca" loading="lazy" draggable="false"><figcaption>Rúgula de huerta local</figcaption></figure>
-      <figure><img src="img/slices.jpg" alt="Pizza de pollo con cebolla y cilantro sobre tabla" loading="lazy" draggable="false"><figcaption>Pollo, cebolla morada y cilantro</figcaption></figure>
-    </div>
-    <div class="rail-ctrl">
-      <button class="nav-btn" data-dir="-1" aria-label="Fotos anteriores"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 3 5 9l6 6"/></svg></button>
-      <button class="nav-btn" data-dir="1" aria-label="Fotos siguientes"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 3 6 6-6 6"/></svg></button>
-    </div>
+  <div class="strip" id="s2">
+    <figure><img src="img/rucula.jpg" alt="Pizza con rúgula" loading="lazy"></figure>
+    <figure><img src="img/masa-manos.jpg" alt="Manos sosteniendo masa" loading="lazy"></figure>
+    <figure><img src="img/pizzaiolo2.jpg" alt="Pizzaiolo sirviendo pizzas" loading="lazy"></figure>
+    <figure><img src="img/horno.jpg" alt="Boca del horno encendido" loading="lazy"></figure>
+    <figure><img src="img/slices.jpg" alt="Pizza de pollo sobre tabla" loading="lazy"></figure>
+    <figure><img src="img/masa-estirar.jpg" alt="Estirando la masa a mano" loading="lazy"></figure>
   </div>
 </section>
 
-<section id="visita" style="padding-top:0">
-  <div class="rv" style="margin-bottom:2.4rem"><span class="eyebrow">Visítanos</span><h2>Siempre hay<br>una mesa tibia.</h2></div>
-  <div class="visit">
-    <div class="card rv">
-      <span class="status" id="status"><i></i><span>Consultando horario…</span></span>
-      <dl class="facts">
-        <div><dt>Dirección</dt><dd>Cra. 20 #21-08, Yarumal</dd></div>
-        <div><dt>Teléfono</dt><dd><a href="tel:+573205550177" style="text-decoration:none">320 555 0177</a></dd></div>
-        <div><dt>Martes a jueves</dt><dd>5:00 – 10:00 p.m.</dd></div>
-        <div><dt>Viernes a domingo</dt><dd>12:00 – 11:00 p.m.</dd></div>
-        <div><dt>Domicilios</dt><dd>Casco urbano, 30–40 min</dd></div>
-        <div><dt>Lunes</dt><dd>Descansa el horno</dd></div>
-      </dl>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:auto">
-        <a class="btn" href="https://wa.me/573205550177" target="_blank" rel="noopener">Reservar por WhatsApp</a>
-        <a class="btn glass" style="box-shadow:0 0 0 1px var(--line)" href="https://www.google.com/maps/search/?api=1&query=Yarumal%2C%20Antioquia" target="_blank" rel="noopener">Abrir en Maps</a>
-      </div>
+<section class="visit" id="visita">
+  <div>
+    <h2>Traiga el frío.<br><em>Nosotros el fuego.</em></h2>
+    <span class="status" id="status"><i></i><span>Consultando horario…</span></span>
+    <dl class="facts">
+      <div><dt>Dirección</dt><dd>Cra. 20 #21-08, Yarumal</dd></div>
+      <div><dt>Teléfono</dt><dd><a href="tel:+573205550177" style="text-decoration:none">320 555 0177</a></dd></div>
+      <div><dt>Martes a jueves</dt><dd>5:00 – 10:00 p.m.</dd></div>
+      <div><dt>Viernes a domingo</dt><dd>12:00 – 11:00 p.m.</dd></div>
+      <div><dt>Domicilios</dt><dd>Casco urbano, 30–40 min</dd></div>
+      <div><dt>Lunes</dt><dd>Descansa el horno</dd></div>
+    </dl>
+    <div class="ctas">
+      <a class="btn" href="https://wa.me/573205550177" target="_blank" rel="noopener">Reservar por WhatsApp</a>
+      <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=Yarumal%2C%20Antioquia" target="_blank" rel="noopener">Abrir en Maps</a>
     </div>
-    <div class="map rv">
-      <iframe title="Mapa de Forno 2265 en Yarumal, Antioquia" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Yarumal%2C%20Antioquia&z=15&output=embed"></iframe>
-      <div class="glass-chip"><div><b>Forno 2265</b><span>Yarumal, Antioquia · 2.265 m</span></div></div>
-    </div>
+  </div>
+  <div class="map">
+    <iframe title="Mapa de Forno 2265 en Yarumal, Antioquia" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Yarumal%2C%20Antioquia&z=15&output=embed"></iframe>
+    <div class="chip"><b>Forno 2265</b><span>Yarumal, Antioquia · 2.265 m</span></div>
   </div>
 </section>
 
 <footer>
-  <div class="foot">
-    <div class="display" aria-hidden="true">Forno <span>2265</span></div>
-    <div class="foot-meta">
-      <div class="soc"><a href="#">Instagram</a><a href="#">TikTok</a><a href="https://wa.me/573205550177">WhatsApp</a></div>
-      <span>Yarumal, Antioquia · © <span id="yr"></span></span>
-      <span>Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
-    </div>
+  <div class="foot-mark" id="footMark" aria-label="Forno 2265"><span>F</span><span>O</span><span>R</span><span>N</span><span>O</span><span class="d">2</span><span class="d">2</span><span class="d">6</span><span class="d">5</span></div>
+  <div class="foot-row">
+    <span>Forno 2265 · Yarumal, Antioquia · © <span id="yr"></span></span>
+    <div class="soc"><a href="#">Instagram</a><a href="#">TikTok</a><a href="https://wa.me/573205550177">WhatsApp</a></div>
+    <span class="credit">Desarrollo por <a href="https://prismaxstudio.com" target="_blank" rel="noopener">PrismaxStudio</a></span>
   </div>
 </footer>
 
-<!-- pedido -->
 <div class="bag" id="bag" aria-live="polite">
   <span class="count" id="bagCount">0</span>
   <span class="txt" id="bagTxt">Tu pedido<small>$0</small></span>
@@ -378,15 +453,23 @@ footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
   <ul class="lines" id="lines"></ul>
   <div class="sheet-foot">
     <div class="sum"><span>Total</span><b id="sheetTotal">$0</b></div>
-    <button class="btn red" id="checkout">Enviar pedido por WhatsApp</button>
+    <button class="btn" id="checkout">Enviar pedido por WhatsApp</button>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const hasGsap = !!window.gsap && !!window.ScrollTrigger;
+  if (!hasGsap) document.documentElement.classList.add('no-gsap');
   const $ = id => document.getElementById(id);
   const money = n => '$' + n.toLocaleString('es-CO');
+  $('yr').textContent = new Date().getFullYear();
 
   /* ---------- resorte (razón de amortiguamiento + respuesta, como en iOS) ---------- */
   function spring({ from, to, velocity = 0, damping = 1, response = .4, onUpdate, onDone }){
@@ -620,36 +703,8 @@ footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
     h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
   });
 
-  /* ---------- galería: arrastre con ratón + inercia ---------- */
-  const rail = $('rail');
-  let rDrag = null;
-  rail.addEventListener('pointerdown', e => {
-    if (e.pointerType !== 'mouse') return;       // en táctil manda el scroll nativo
-    rDrag = { x: e.clientX, s: rail.scrollLeft, hist: [{ t: performance.now(), x: e.clientX }], moved: false };
-    rail.setPointerCapture(e.pointerId);
-  });
-  rail.addEventListener('pointermove', e => {
-    if (!rDrag) return;
-    const dx = e.clientX - rDrag.x;
-    if (!rDrag.moved && Math.abs(dx) < 6) return;   // histéresis
-    rDrag.moved = true; rail.classList.add('dragging');
-    rail.scrollLeft = rDrag.s - dx;
-    const now = performance.now(); rDrag.hist.push({ t: now, x: e.clientX }); rDrag.hist = rDrag.hist.filter(p => now - p.t < 100);
-  });
-  const rEnd = () => {
-    if (!rDrag) return;
-    const a = rDrag.hist[0], b = rDrag.hist[rDrag.hist.length - 1];
-    const v = (b.t - a.t) > 0 ? -(b.x - a.x) / ((b.t - a.t) / 1000) : 0;
-    const card = rail.children[0].offsetWidth + 14;
-    const target = Math.round((rail.scrollLeft + project(v, .995)) / card) * card;
-    rDrag = null;
-    spring({ from: rail.scrollLeft, to: Math.max(0, Math.min(target, rail.scrollWidth - rail.clientWidth)), velocity: v, response: .5, onUpdate: x => rail.scrollLeft = x, onDone: () => rail.classList.remove('dragging') });
-  };
-  rail.addEventListener('pointerup', rEnd); rail.addEventListener('pointercancel', rEnd);
-  document.querySelectorAll('.rail-ctrl .nav-btn').forEach(b => b.addEventListener('click', () => {
-    const card = rail.children[0].offsetWidth + 14;
-    rail.scrollBy({ left: +b.dataset.dir * card, behavior: reduce ? 'auto' : 'smooth' });
-  }));
+
+  renderCart();
 
   /* ---------- horario en vivo (hora de Colombia) ---------- */
   const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Bogota' }));
@@ -657,24 +712,151 @@ footer{max-width:1400px;margin:0 auto;padding:40px var(--g) 120px}
   const open = (d >= 2 && d <= 4 && h >= 17 && h < 22) || ((d === 5 || d === 6 || d === 0) && h >= 12 && h < 23);
   $('status').classList.toggle('open', open);
   $('status').querySelector('span').textContent = open ? 'Abierto ahora · el horno está encendido' : (d === 1 ? 'Hoy lunes descansa el horno' : 'Cerrado ahora · abrimos pronto');
-  $('liveOpen').textContent = open ? 'Abierto ahora' : 'Cerrado ahora';
-  $('liveOpen').classList.toggle('open', open);
 
-  /* ---------- números del hero: el horno "calienta" ---------- */
-  if (!reduce){
-    const tIn = $('tIn');
-    spring({ from: 14, to: 485, damping: 1, response: 1.1, onUpdate: v => tIn.textContent = Math.round(v) + '°' });
+  /* ---------- niebla ---------- */
+  const fog = $('fog'), fctx = fog.getContext('2d');
+  let blobs = [], fogOn = true;
+  function sizeFog(){ const r = fog.getBoundingClientRect(); fog.width = r.width / 2; fog.height = r.height / 2;
+    blobs = Array.from({ length: 14 }, () => ({ x: Math.random() * fog.width, y: fog.height * (.3 + Math.random() * .7), r: fog.width * (.18 + Math.random() * .25), v: .08 + Math.random() * .25, a: .05 + Math.random() * .08 })); }
+  sizeFog(); addEventListener('resize', sizeFog);
+  (function drawFog(){
+    if (fogOn){
+      fctx.clearRect(0, 0, fog.width, fog.height);
+      for (const b of blobs){
+        if (!reduce) b.x += b.v; if (b.x - b.r > fog.width) b.x = -b.r;
+        const g = fctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+        g.addColorStop(0, `rgba(220,228,234,${b.a})`); g.addColorStop(1, 'rgba(220,228,234,0)');
+        fctx.fillStyle = g; fctx.fillRect(b.x - b.r, b.y - b.r, b.r * 2, b.r * 2);
+      }
+    }
+    requestAnimationFrame(drawFog);
+  })();
+  // la ondulación de calor solo en pantallas grandes (es costosa)
+  if (fine && !reduce) $('fireImg').style.filter = 'url(#heat)';
+
+  /* ---------- cursor ---------- */
+  if (fine){
+    const cur = $('cursor'), ring = cur.querySelector('.ring'), dot = cur.querySelector('.dot');
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; dot.style.transform = `translate(${mx}px,${my}px)`; });
+    (function follow(){ rx += (mx - rx) * .18; ry += (my - ry) * .18; ring.style.transform = `translate(${rx}px,${ry}px)`; requestAnimationFrame(follow); })();
+    document.querySelectorAll('[data-cursor]').forEach(el => {
+      el.addEventListener('pointerenter', () => { $('cursorTxt').textContent = el.dataset.cursor; cur.classList.add('big'); });
+      el.addEventListener('pointerleave', () => cur.classList.remove('big'));
+    });
   }
 
-  /* ---------- apariciones ---------- */
-  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.rv, .oven').forEach((el, i) => {
-    const sib = [...el.parentElement.children].filter(c => c.classList.contains('rv'));
-    const k = sib.indexOf(el); if (k > 0) el.style.transitionDelay = Math.min(k * 70, 280) + 'ms';
-    io.observe(el);
+  /* ---------- pie: letras que se ensanchan con el cursor ---------- */
+  const fm = $('footMark'), fl = [...fm.children];
+  if (fine){
+    fm.addEventListener('pointermove', e => fl.forEach(s => { const r = s.getBoundingClientRect(); const dx = Math.abs(e.clientX - (r.left + r.width / 2)); const t = Math.max(0, 1 - dx / 260); s.style.fontStretch = (62 + t * 63) + '%'; s.style.fontWeight = 600 + t * 300; }));
+    fm.addEventListener('pointerleave', () => fl.forEach(s => { s.style.fontStretch = '62%'; s.style.fontWeight = ''; }));
+    fl.forEach(s => s.style.transition = 'font-stretch .5s cubic-bezier(.23,1,.32,1), font-weight .5s, color .3s');
+  }
+
+  if (!hasGsap){ $('loader').remove(); return; }
+
+  /* ================= GSAP + Lenis ================= */
+  gsap.registerPlugin(ScrollTrigger); if (window.SplitText) gsap.registerPlugin(SplitText);
+  let lenis = null;
+  if (!reduce && window.Lenis){
+    lenis = new Lenis({ lerp: .09 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+  }
+  const goTo = sel => lenis ? lenis.scrollTo(sel, { duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) }) : document.querySelector(sel).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  document.querySelectorAll('[data-scroll]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); goTo(a.getAttribute('href')); }));
+  const split = (el, type) => window.SplitText ? SplitText.create(el, { type, mask: type.includes('lines') ? 'lines' : undefined }) : null;
+
+  /* ---------- preloader: FORNO se ensancha con el calor ---------- */
+  if (lenis) lenis.stop();
+  const lt = { t: 14 };
+  const letters = gsap.utils.toArray('#loadWord span');
+  gsap.timeline()
+    .from(letters, { yPercent: 100, opacity: 0, duration: .9, stagger: .06, ease: 'expo.out' })
+    .to(lt, { t: 485, duration: 1.6, ease: 'power2.inOut', onUpdate: () => $('loadNum').textContent = Math.round(lt.t) + '°' }, '<.2')
+    .to('#loadBar', { scaleX: 1, duration: 1.6, ease: 'power2.inOut' }, '<')
+    .to(letters, { fontStretch: '125%', color: '#ff7a2f', duration: 1.2, stagger: .08, ease: 'power2.inOut' }, '<.2')
+    .to('.loader .wipe', { yPercent: -100, duration: .9, ease: 'expo.inOut' }, '+=.1')
+    .set('.loader .word, .loader .meta, .loader .bar', { opacity: 0 })
+    .to('#loader', { yPercent: -100, duration: .9, ease: 'expo.inOut' }, '-=.2')
+    .set('#loader', { display: 'none' })
+    .from('.intro .cold img', { scale: 1.4, duration: 2, ease: 'expo.out' }, '-=.8')
+    .from('#tNum', { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out' }, '<.2')
+    .from('.intro .temp .lbl, #copyCold, .intro .hint, .thermo', { opacity: 0, y: 20, duration: 1, stagger: .08, ease: 'expo.out' }, '<.2')
+    .add(() => lenis && lenis.start());
+
+  /* ---------- héroe fijado: del frío al fuego ---------- */
+  const temp = { t: 14 }, tNum = $('tNum');
+  const setTemp = () => {
+    const p = (temp.t - 14) / (485 - 14);
+    tNum.firstChild.nodeValue = Math.round(temp.t);
+    tNum.style.fontStretch = (62 + p * 63) + '%';
+    tNum.style.color = gsap.utils.interpolate('#c9d3da', '#ff7a2f', Math.min(1, p * 1.3));
+    $('tLbl').textContent = p < .45 ? 'Afuera · Yarumal, 2.265 m' : 'Adentro · el horno de leña';
+  };
+  const hero = gsap.timeline({ scrollTrigger: { trigger: '.intro', start: 'top top', end: '+=240%', pin: true, scrub: 1,
+    onUpdate: self => { fogOn = self.progress < .7; } } });
+  hero.to('.intro .hint', { opacity: 0, duration: .3 }, 0)
+      .to('.intro .cold img', { scale: 1.25, duration: 4, ease: 'none' }, 0)
+      .to('#hot', { clipPath: 'circle(80% at 50% 58%)', duration: 3, ease: 'power2.in' }, .6)
+      .fromTo('#hot img', { scale: 1.5 }, { scale: 1, duration: 3.2, ease: 'power2.out' }, .6)
+      .to(temp, { t: 485, duration: 3, ease: 'power1.in', onUpdate: setTemp }, .6)
+      .to('#thermo', { scaleY: 1, duration: 3, ease: 'power1.in' }, .6)
+      .to('#copyCold', { opacity: 0, y: -20, duration: .5 }, 1.4)
+      .to('#copyHot', { opacity: 1, duration: .6 }, 2.4)
+      .to('.intro .temp', { scale: .55, transformOrigin: '0% 100%', duration: 1, ease: 'power2.inOut' }, 3)
+      .to('#mark', { opacity: 1, duration: .8 }, 3.2)
+      .fromTo('#mark', { fontStretch: '62%', letterSpacing: '.2em' }, { fontStretch: '125%', letterSpacing: '-.02em', duration: 1.2, ease: 'power2.out' }, 3.2);
+  gsap.set('#hot', { clipPath: 'circle(0% at 50% 58%)' });
+
+  /* ---------- cinta: se mueve con el scroll ---------- */
+  gsap.fromTo('#rib1', { xPercent: 0 }, { xPercent: -40, ease: 'none', scrollTrigger: { trigger: '.ribbon', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  /* ---------- la masa: recorrido horizontal ---------- */
+  const track = $('track'), panels = gsap.utils.toArray('.panel');
+  const tw = gsap.to(track, { x: () => -(track.scrollWidth - innerWidth), ease: 'none',
+    scrollTrigger: { trigger: '.process', start: 'top top', end: () => '+=' + (track.scrollWidth - innerWidth), pin: true, scrub: 1, invalidateOnRefresh: true } });
+  panels.forEach(p => {
+    gsap.fromTo(p.querySelector('.ph img'), { xPercent: -8 }, { xPercent: 8, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: tw, start: 'left right', end: 'right left', scrub: true } });
+    const c = p.querySelector('.count'), o = { v: 0 };
+    ScrollTrigger.create({ trigger: p, containerAnimation: tw, start: 'left 60%', once: true,
+      onEnter: () => gsap.to(o, { v: +c.dataset.to, duration: 1.6, ease: 'expo.out', onUpdate: () => c.textContent = Math.round(o.v) }) });
+    gsap.from(p.querySelectorAll('.txt > *'), { y: 50, opacity: 0, stagger: .06, ease: 'expo.out', duration: 1, scrollTrigger: { trigger: p, containerAnimation: tw, start: 'left 55%' } });
   });
-  $('yr').textContent = new Date().getFullYear();
-  renderCart();
+  // el primer panel entra con la masa creciendo
+  gsap.fromTo(panels[0].querySelector('.ph'), { clipPath: 'inset(20% 20% 20% 20% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 28px)', ease: 'power2.out', scrollTrigger: { trigger: '.process', start: 'top 80%', end: 'top top', scrub: true } });
+
+  /* ---------- carta ---------- */
+  const mh = split(document.querySelector('.menu-head h2'), 'chars');
+  if (mh) gsap.from(mh.chars, { yPercent: 100, fontStretch: '125%', opacity: 0, duration: 1.2, stagger: .04, ease: 'expo.out', scrollTrigger: { trigger: '.menu-head', start: 'top 80%' } });
+  gsap.from('#wheel', { rotate: -120, scale: .7, opacity: 0, duration: 1.8, ease: 'expo.out', scrollTrigger: { trigger: '.wheel-sec', start: 'top 75%' } });
+  gsap.from('.detail', { y: 80, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.wheel-sec', start: 'top 70%' } });
+
+  /* ---------- pizzaiolo ---------- */
+  gsap.fromTo('#chefImg', { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.chef', start: 'top bottom', end: 'bottom top', scrub: true } });
+  const cq = split($('chefQ'), 'words');
+  if (cq){ gsap.set(cq.words, { opacity: .15 }); gsap.to(cq.words, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: '.chef', start: 'top 40%', end: 'bottom 90%', scrub: true } }); }
+
+  /* ---------- galería: dos cintas en sentido contrario ---------- */
+  ['s1','s2'].forEach((id, i) => {
+    const s = $(id); s.innerHTML += s.innerHTML;
+    const loop = gsap.fromTo(s, { xPercent: i ? -50 : 0 }, { xPercent: i ? 0 : -50, duration: 60, ease: 'none', repeat: -1 });
+    s.addEventListener('pointerenter', () => gsap.to(loop, { timeScale: .2, duration: .6 }));
+    s.addEventListener('pointerleave', () => gsap.to(loop, { timeScale: 1, duration: .6 }));
+    ScrollTrigger.create({ trigger: '.gallery', start: 'top bottom', end: 'bottom top', onUpdate: self => { const v = Math.min(5, Math.abs(self.getVelocity() / 500)); gsap.to(loop, { timeScale: 1 + v, duration: .25, overwrite: true }); gsap.to(loop, { timeScale: 1, duration: 1.2, delay: .25 }); } });
+  });
+  const gh = split(document.querySelector('.gallery h2'), 'chars');
+  if (gh) gsap.from(gh.chars, { yPercent: 100, opacity: 0, duration: 1, stagger: .03, ease: 'expo.out', scrollTrigger: { trigger: '.gallery', start: 'top 80%' } });
+
+  /* ---------- visita y pie ---------- */
+  const vh = split(document.querySelector('.visit h2'), 'lines,words');
+  if (vh) gsap.from(vh.words, { yPercent: 110, duration: 1.2, stagger: .06, ease: 'expo.out', scrollTrigger: { trigger: '.visit', start: 'top 75%' } });
+  gsap.fromTo('.map', { clipPath: 'inset(0% 0% 100% 0% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 28px)', duration: 1.6, ease: 'expo.inOut', scrollTrigger: { trigger: '.map', start: 'top 80%' } });
+  gsap.from('#footMark span', { yPercent: 100, opacity: 0, duration: 1.2, stagger: .05, ease: 'expo.out', scrollTrigger: { trigger: 'footer', start: 'top 85%' } });
+
+  addEventListener('load', () => ScrollTrigger.refresh());
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
 })();
 </script>
 </body>
